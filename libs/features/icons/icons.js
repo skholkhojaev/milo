@@ -34,10 +34,10 @@ export const fetchIcons = (config) => new Promise(async (resolve) => {
   resolve(fetchedIcons);
 });
 
-function decorateToolTip(icon) {
+async function decorateToolTip(icon) {
   const wrapper = icon.closest('em');
-  wrapper.className = 'tooltip-wrapper';
   if (!wrapper) return;
+  wrapper.className = 'tooltip-wrapper';
   const conf = wrapper.textContent.split('|');
   // Text is the last part of a tooltip
   const content = conf.pop().trim();
@@ -45,7 +45,9 @@ function decorateToolTip(icon) {
   icon.dataset.tooltip = content;
   // Position is the next to last part of a tooltip
   const place = conf.pop()?.trim().toLowerCase() || 'right';
-  icon.className = `icon icon-info milo-tooltip ${place}`;
+  const defaultIcon = 'info-outline';
+  icon.className = `icon icon-${defaultIcon} milo-tooltip ${place}`;
+  icon.dataset.name = defaultIcon;
   wrapper.parentElement.replaceChild(icon, wrapper);
 }
 
