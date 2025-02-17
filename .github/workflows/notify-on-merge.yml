@@ -13,11 +13,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Send Slack Notification
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const main = require('./.github/workflows/notify-merge.js');
-            main({ github, context });
+      - name: Run Notify-Merge Script
+        # Use Node.js to run the notify-merge.js script.
+        # Since Node.js v20 supports --env-file, you can use this flag to load environment variables.
+        run: node --env-file=.env .github/workflows/notify-merge.js
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.OKAN_SLACK_WEBHOOK }}
