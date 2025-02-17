@@ -14,8 +14,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Notify-Merge Script
-        # Use Node.js to run the notify-merge.js script.
-        # Since Node.js v20 supports --env-file, you can use this flag to load environment variables.
-        run: node --env-file=.env .github/workflows/notify-merge.js
+        # If you're testing locally, you can add '--env-file=.env'
+        run: node .github/workflows/notify-merge.js
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.OKAN_SLACK_WEBHOOK }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
