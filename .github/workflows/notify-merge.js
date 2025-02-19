@@ -1,13 +1,12 @@
 const fs = require('fs');
 const { slackNotification } = require('./helpers.js');
-// instead added this one
+
 const SLACK = {
   merge: ({ html_url, number, title, prefix = '' }) =>
       `:merged: PR merged to stage: ${prefix} <${html_url}|#${number}: ${title}>.`,
 };
 
 const mergeRegex = /Merge pull request #(\d+)/i;
-
 function getRepoInfo() {
   const repoFull = process.env.GITHUB_REPOSITORY;
   if (!repoFull) {
@@ -31,7 +30,6 @@ async function getPR(prNumber, owner, repo, token) {
   return await response.json();
 }
 
-// Uses the preview API to fetch pull requests associated with a commit.
 async function getAssociatedPR(commitSha, owner, repo, token) {
   const url = `https://api.github.com/repos/${owner}/${repo}/commits/${commitSha}/pulls`;
   const response = await fetch(url, {
