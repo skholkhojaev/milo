@@ -1,5 +1,4 @@
 const {
-  // This is a test
   slackNotification,
   getLocalConfigs,
   isWithinRCP,
