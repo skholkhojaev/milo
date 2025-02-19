@@ -5,7 +5,7 @@ const SLACK = {
   merge: ({ html_url, number, title, prefix = '' }) =>
       `:merged: PR merged to stage: ${prefix} <${html_url}|${number}: ${title}>.`,
 };
-// Testing attention please!
+
 const mergeRegex = /Merge pull request #(\d+)/i;
 
 function getRepoInfo() {
@@ -70,7 +70,7 @@ async function main() {
           prefix: '',
         });
         console.log(`Sending notification for PR #${pr.number}: ${pr.title}`);
-        await slackNotification(SLACK, process.env.OKAN_SLACK_WEBHOOK);
+        await slackNotification(message, process.env.OKAN_SLACK_WEBHOOK);
       } catch (error) {
         console.error(`Error fetching or notifying for PR #${prNumber}:`, error);
       }
@@ -80,13 +80,11 @@ async function main() {
     const branch = process.env.GITHUB_REF ? process.env.GITHUB_REF.split('/').pop() : 'unknown';
     const commit = process.env.GITHUB_SHA || 'unknown';
     const commitUrl = `https://github.com/${owner}/${repo}/commit/${commit}`;
-    const message = `*Merge Alert!*  
-A new merge was detected on *${branch}*.  
-[View Commit](${commitUrl})`;
+    const message = `:merged: PR merged to stage: <${commitUrl}|Commit ${commit.substring(0, 7)}>`;
     console.log(`Sending fallback Slack notification: ${message}`);
     await slackNotification(message, process.env.OKAN_SLACK_WEBHOOK)
-        .then(() => console.log('slack notif sent successfully'))
-        .catch((error) => console.error('Error in sending the slack notification:', error));
+        .then(() => console.log('Fallback Slack notification sent successfully.'))
+        .catch((error) => console.error('Error sending fallback Slack notification:', error));
   }
 }
 
