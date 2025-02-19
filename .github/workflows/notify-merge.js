@@ -6,7 +6,7 @@ const SLACK = {
   merge: ({ html_url, number, title, prefix = '' }) =>
     `:merged: PR merged to stage: ${prefix} <${html_url}|${number}: ${title}>.`,
 };
-
+// Testing attention please!
 const mergeRegex = /Merge pull request #(\d+)/i;
 
 function getRepoInfo() {
@@ -71,7 +71,7 @@ async function main() {
           prefix: '',
         });
         console.log(`Sending notification for PR #${pr.number}: ${pr.title}`);
-        await slackNotification(message, process.env.OKAN_SLACK_WEBHOOK);
+        await slackNotification(SLACK, process.env.OKAN_SLACK_WEBHOOK);
       } catch (error) {
         console.error(`Error fetching or notifying for PR #${prNumber}:`, error);
       }
