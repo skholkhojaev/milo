@@ -1,13 +1,11 @@
 const fs = require('fs');
 const { slackNotification } = require('./helpers.js');
-// instead added this one
 const SLACK = {
   merge: ({ html_url, number, title, prefix = '' }) =>
       `:merged: PR merged to stage: ${prefix} <${html_url}|#${number}: ${title}>.`,
 };
 
 const mergeRegex = /Merge pull request #(\d+)/i;
-
 function getRepoInfo() {
   const repoFull = process.env.GITHUB_REPOSITORY;
   if (!repoFull) {
