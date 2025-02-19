@@ -1,10 +1,9 @@
 const fs = require('fs');
-
 const { slackNotification, getLocalConfigs } = require('./helpers.js');
 
 const SLACK = {
   merge: ({ html_url, number, title, prefix = '' }) =>
-    `:merged: PR merged to stage: ${prefix} <${html_url}|${number}: ${title}>.`,
+      `:merged: PR merged to stage: ${prefix} <${html_url}|${number}: ${title}>.`,
 };
 // Testing attention please!
 const mergeRegex = /Merge pull request #(\d+)/i;
@@ -85,7 +84,9 @@ async function main() {
 A new merge was detected on *${branch}*.  
 [View Commit](${commitUrl})`;
     console.log(`Sending fallback Slack notification: ${message}`);
-    await slackNotification(SLACK, process.env.OKAN_SLACK_WEBHOOK);
+    await slackNotification(message, process.env.OKAN_SLACK_WEBHOOK)
+        .then(() => console.log('slack notif sent successfully'))
+        .catch((error) => console.error('Error in sending the slack notification:', error));
   }
 }
 
