@@ -10,7 +10,7 @@ const SLACK = {
 const mergeRegex = /Merge pull request #(\d+)/i;
 
 function getRepoInfo() {
-  const repoFull = process.env.GITHUB_REPOSITORY; // e.g. "your-org/your-repo"
+  const repoFull = process.env.GITHUB_REPOSITORY;
   if (!repoFull) {
     throw new Error("GITHUB_REPOSITORY is not defined in the environment.");
   }
@@ -35,7 +35,6 @@ async function getPR(prNumber, owner, repo, token) {
 async function main() {
   let prNumbers = new Set();
 
-  // Read event payload if available (from GITHUB_EVENT_PATH)
   const eventPath = process.env.GITHUB_EVENT_PATH;
   if (eventPath) {
     try {
@@ -86,7 +85,7 @@ async function main() {
 A new merge was detected on *${branch}*.  
 [View Commit](${commitUrl})`;
     console.log(`Sending fallback Slack notification: ${message}`);
-    await slackNotification(message, process.env.OKAN_SLACK_WEBHOOK);
+    await slackNotification(SLACK, process.env.OKAN_SLACK_WEBHOOK);
   }
 }
 
