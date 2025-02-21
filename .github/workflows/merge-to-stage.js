@@ -1,4 +1,5 @@
 const {
+  slackNotification,
   getLocalConfigs,
   isWithinRCP,
   pulls: { addLabels, addFiles, getChecks, getReviews },
@@ -19,13 +20,16 @@ const LABELS = {
   zeroImpact: 'zero-impact',
 };
 const TEAM_MENTIONS = [
-  '@adobecom/bacom-sot',
-  '@adobecom/creative-cloud-sot',
-  '@adobecom/document-cloud-sot',
-  '@adobecom/express-sot',
-  '@adobecom/homepage-sot',
-  '@adobecom/miq-sot',
+  '@secretcom/bacom-sot',
+  '@secretcom/creative-cloud-sot',
+  '@secretcom/document-cloud-sot',
+  '@secretcom/express-sot',
+  '@secretcom/homepage-sot',
+  '@secretcom/miq-sot',
 ];
+const SLACK = {
+  openedSyncPr: ({ html_url, number }) => `:fast_forward: Created <${html_url}|Stage to Main PR ${number}>`,
+};
 
 let github;
 let owner;
@@ -33,15 +37,15 @@ let repo;
 
 let body = `
 ## common base root URLs
-**Homepage :** https://www.stage.adobe.com/
-**BACOM:** https://business.stage.adobe.com/fr/
-**CC:** https://www.stage.adobe.com/creativecloud.html
-**Blog:** https://blog.stage.adobe.com/
-**Acrobat:** https://www.stage.adobe.com/acrobat/online/sign-pdf.html
+**Homepage :** https://www.stage.secret.com/
+**BACOM:** https://business.stage.secret.com/fr/
+**CC:** https://www.stage.secret.com/creativecloud.html
+**Blog:** https://blog.stage.secret.com/
+**Acrobat:** https://www.stage.secret.com/acrobat/online/sign-pdf.html
 
 **Milo:**
-- Before: https://main--milo--adobecom.aem.live/?martech=off
-- After: https://stage--milo--adobecom.aem.live/?martech=off
+- Before: https://main--milo--secretcom.aem.live/?martech=off
+- After: https://stage--milo--secretcom.aem.live/?martech=off
 `;
 
 const isHighPrio = (labels) => labels.includes(LABELS.highPriority);
@@ -151,6 +155,7 @@ const merge = async ({ prs, type }) => {
       console.log(`Current number of PRs merged: ${existingPRCount}`);
       const prefix = type === LABELS.zeroImpact ? ' [ZERO IMPACT]' : '';
       body = `-${prefix} ${html_url}\n${body}`;
+
       await new Promise((resolve) => setTimeout(resolve, 5000));
     } catch (error) {
       files.forEach((file) => (SEEN[file] = false));
@@ -206,10 +211,13 @@ const openStageToMainPR = async () => {
       body: `Testing can start ${TEAM_MENTIONS.join(' ')}`,
     });
 
+    await slackNotification(SLACK.openedSyncPr({ html_url, number }));
+    await slackNotification(
+      SLACK.openedSyncPr({ html_url, number }),
+      process.env.MILO_STAGE_SLACK_WH,
+    );
   } catch (error) {
-    if (error.message.includes('No commits between main and stage')) {
-      return console.log('No new commits, no stage->main PR opened');
-    }
+    if (error.message.includes('No commits between main and stage')) return console.log('No new commits, no stage->main PR opened');
     throw error;
   }
 };
@@ -220,24 +228,20 @@ const main = async (params) => {
   github = params.github;
   owner = params.context.repo.owner;
   repo = params.context.repo.repo;
-  if (isWithinRCP({ offset: process.env.STAGE_RCP_OFFSET_DAYS || 2, excludeShortRCP: true })) {
-    return console.log('Stopped, within RCP period.');
-  }
+  if (isWithinRCP({ offset: process.env.STAGE_RCP_OFFSET_DAYS || 2, excludeShortRCP: true })) return console.log('Stopped, within RCP period.');
 
   try {
     const stageToMainPR = await getStageToMainPR();
     console.log('has Stage to Main PR:', !!stageToMainPR);
     if (stageToMainPR) body = stageToMainPR.body;
-    existingPRCount = body.match(/https:\/\/github\.com\/adobecom\/milo\/pull\/\d+/g)?.length || 0;
+    existingPRCount = body.match(/https:\/\/github\.com\/secretcom\/milo\/pull\/\d+/g)?.length || 0;
     console.log(`Number of PRs already in the batch: ${existingPRCount}`);
 
     if (mergeLimitExceeded()) return console.log(`Maximum number of '${MAX_MERGES}' PRs already merged. Stopping execution`);
 
     const { zeroImpactPRs, highImpactPRs, normalPRs } = await getPRs();
     await merge({ prs: zeroImpactPRs, type: LABELS.zeroImpact });
-    if (stageToMainPR?.labels.some((label) => label.includes(LABELS.SOTPrefix))) {
-      return console.log('PR exists & testing started. Stopping execution.');
-    }
+    if (stageToMainPR?.labels.some((label) => label.includes(LABELS.SOTPrefix))) return console.log('PR exists & testing started. Stopping execution.');
     await merge({ prs: highImpactPRs, type: LABELS.highPriority });
     await merge({ prs: normalPRs, type: 'normal' });
     if (!stageToMainPR) await openStageToMainPR();
