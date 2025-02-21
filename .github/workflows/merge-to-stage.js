@@ -1,5 +1,4 @@
 const {
-  slackNotification,
   getLocalConfigs,
   isWithinRCP,
   pulls: { addLabels, addFiles, getChecks, getReviews },
@@ -27,10 +26,6 @@ const TEAM_MENTIONS = [
   '@adobecom/homepage-sot',
   '@adobecom/miq-sot',
 ];
-const SLACK = {
-  merge: ({ html_url, number, title, prefix = '' }) => `:merged: PR merged to stage: ${prefix} <${html_url}|${number}: ${title}>.`,
-  openedSyncPr: ({ html_url, number }) => `:fast_forward: Created <${html_url}|Stage to Main PR ${number}>`,
-};
 
 let github;
 let owner;
@@ -156,14 +151,6 @@ const merge = async ({ prs, type }) => {
       console.log(`Current number of PRs merged: ${existingPRCount}`);
       const prefix = type === LABELS.zeroImpact ? ' [ZERO IMPACT]' : '';
       body = `-${prefix} ${html_url}\n${body}`;
-      await slackNotification(
-        SLACK.merge({
-          html_url,
-          number,
-          title,
-          prefix,
-        }),
-      ).catch(console.error);
       await new Promise((resolve) => setTimeout(resolve, 5000));
     } catch (error) {
       files.forEach((file) => (SEEN[file] = false));
@@ -219,13 +206,10 @@ const openStageToMainPR = async () => {
       body: `Testing can start ${TEAM_MENTIONS.join(' ')}`,
     });
 
-    await slackNotification(SLACK.openedSyncPr({ html_url, number }));
-    await slackNotification(
-      SLACK.openedSyncPr({ html_url, number }),
-      process.env.MILO_STAGE_SLACK_WH,
-    );
   } catch (error) {
-    if (error.message.includes('No commits between main and stage')) return console.log('No new commits, no stage->main PR opened');
+    if (error.message.includes('No commits between main and stage')) {
+      return console.log('No new commits, no stage->main PR opened');
+    }
     throw error;
   }
 };
@@ -236,7 +220,9 @@ const main = async (params) => {
   github = params.github;
   owner = params.context.repo.owner;
   repo = params.context.repo.repo;
-  if (isWithinRCP({ offset: process.env.STAGE_RCP_OFFSET_DAYS || 2, excludeShortRCP: true })) return console.log('Stopped, within RCP period.');
+  if (isWithinRCP({ offset: process.env.STAGE_RCP_OFFSET_DAYS || 2, excludeShortRCP: true })) {
+    return console.log('Stopped, within RCP period.');
+  }
 
   try {
     const stageToMainPR = await getStageToMainPR();
@@ -249,7 +235,9 @@ const main = async (params) => {
 
     const { zeroImpactPRs, highImpactPRs, normalPRs } = await getPRs();
     await merge({ prs: zeroImpactPRs, type: LABELS.zeroImpact });
-    if (stageToMainPR?.labels.some((label) => label.includes(LABELS.SOTPrefix))) return console.log('PR exists & testing started. Stopping execution.');
+    if (stageToMainPR?.labels.some((label) => label.includes(LABELS.SOTPrefix))) {
+      return console.log('PR exists & testing started. Stopping execution.');
+    }
     await merge({ prs: highImpactPRs, type: LABELS.highPriority });
     await merge({ prs: normalPRs, type: 'normal' });
     if (!stageToMainPR) await openStageToMainPR();
