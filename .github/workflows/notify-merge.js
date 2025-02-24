@@ -3,6 +3,7 @@ const { slackNotification } = require('./helpers.js');
 let github;
 let owner;
 let repo;
+// Lets hope this works
 
 const SLACK = {
     merge: ({ html_url, number, title, prefix = '' }) =>
