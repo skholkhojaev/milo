@@ -1,19 +1,16 @@
 const { slackNotification } = require('./helpers.js');
-const { getOctokit, context } = require('@actions/github');
-
-const github = getOctokit(process.env.GITHUB_TOKEN);
-const owner = context.repo.owner;
-const repo = context.repo.repo;
+const { Octokit } = require('@octokit/rest');
 
 const SLACK = {
     merge: ({ html_url, number, title, prefix = '' }) =>
         `:merged: PR merged to stage: ${prefix} <${html_url}|#${number}: ${title}>.`,
 };
 
-const getMergedPRsForCommit = async () => {
+const getMergedPRsForCommit = async (octokit) => {
     const commitSha = process.env.GITHUB_SHA;
+    const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 
-    const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+    const { data: prs } = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
         owner,
         repo,
         commit_sha: commitSha,
@@ -28,8 +25,10 @@ const getMergedPRsForCommit = async () => {
 };
 
 async function main() {
+    const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+
     try {
-        const prs = await getMergedPRsForCommit();
+        const prs = await getMergedPRsForCommit(octokit);
         for (const pr of prs) {
             const message = SLACK.merge({
                 html_url: pr.html_url,
@@ -41,7 +40,7 @@ async function main() {
             await slackNotification(message, process.env.OKAN_SLACK_WEBHOOK);
         }
     } catch (error) {
-        console.error(`Error fetching or notifying for PR(s):`, error);
+        console.error('Error fetching or notifying for PR(s):', error);
     }
 }
 
