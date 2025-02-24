@@ -19,21 +19,6 @@ async function getPR(prNumber, owner, repo, token) {
     return response.json();
 }
 
-// async function getAssociatedPR(commitSha, owner, repo, token) {
-//     const url = `https://api.github.com/repos/${owner}/${repo}/commits/${commitSha}/pulls`;
-//     const response = await fetch(url, {
-//         headers: {
-//             Accept: 'application/vnd.github.groot-preview+json',
-//             Authorization: `token ${token}`,
-//         },
-//     });
-//     if (!response.ok) {
-//         throw new Error(`Failed to fetch associated PR for commit ${commitSha}: ${response.status}`);
-//     }
-//     const prs = await response.json();
-//     return prs.length > 0 ? prs[0] : null;
-// }
-
 async function main() {
     const { owner, repo } = getRepoInfo();
 
@@ -56,28 +41,6 @@ async function main() {
             }
         }
     }
-    // else {
-    //     const commit = process.env.GITHUB_SHA;
-    //     try {
-    //         const associatedPR = await getAssociatedPR(commit, owner, repo, githubToken);
-    //         if (associatedPR) {
-    //             const message = SLACK.merge({
-    //                 html_url: associatedPR.html_url,
-    //                 number: associatedPR.number,
-    //                 title: associatedPR.title,
-    //                 prefix: '',
-    //             });
-    //             console.log(`Sending fallback notification using associated PR #${associatedPR.number}: ${associatedPR.title}`);
-    //             await slackNotification(message, process.env.OKAN_SLACK_WEBHOOK)
-    //                 .then(() => console.log('Fallback Slack notification sent successfully.'))
-    //                 .catch((error) => console.error('Error sending fallback Slack notification:', error));
-    //         } else {
-    //             console.error('No associated PR found for commit:', commit);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching associated PR:', error);
-    //     }
-    // }
 }
 
 main().catch((error) => {
