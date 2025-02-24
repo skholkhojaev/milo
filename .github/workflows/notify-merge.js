@@ -49,6 +49,9 @@ async function main(params) {
     }
 }
 
-main();
+main().catch((error) => {
+    console.error('Error in notify-merge script:', error);
+    process.exit(1);
+});
 
 module.exports = main;
