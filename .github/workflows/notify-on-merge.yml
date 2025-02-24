@@ -1,0 +1,19 @@
+name: Notify on Merge
+
+on:
+  push:
+    branches:
+      - stage
+      - main
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Notify-Merge Script
+        run: node .github/workflows/notify-merge.js
+        env:
+          OKAN_SLACK_WEBHOOK: ${{ secrets.OKAN_SLACK_WEBHOOK }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
