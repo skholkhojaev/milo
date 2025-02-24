@@ -4,6 +4,7 @@ const SLACK = {
     merge: ({ html_url, number, title, prefix = '' }) =>
         `:merged: PR merged to stage: ${prefix} <${html_url}|#${number}: ${title}>.`,
 };
+// Test
 
 async function getPR(prNumber, owner, repo, token) {
     const url = `https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}`;
