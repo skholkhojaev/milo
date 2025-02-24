@@ -1,6 +1,6 @@
 const { slackNotification } = require('./helpers.js');
+const title = require("../../tools/loc/helix/docx2md.bundle");
 
-let github;
 let owner;
 let repo;
 
@@ -9,7 +9,7 @@ const SLACK = {
         `:merged: PR merged to stage: ${prefix} <${html_url}|#${number}: ${title}>.`,
 };
 
-const getMergedPRsForCommit = async () => {
+const getMergedPRsForCommit = async (github) => {
     const commitSha = process.env.GITHUB_SHA;
     const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 
@@ -28,12 +28,12 @@ const getMergedPRsForCommit = async () => {
 };
 
 async function main(params) {
-    github = params.github;
+    const github = params.github;
     owner = params.context.repo.owner;
     repo = params.context.repo.repo;
 
     try {
-        const prs = await getMergedPRsForCommit();
+        const prs = await getMergedPRsForCommit(github);
         for (const pr of prs) {
             const message = SLACK.merge({
                 html_url: pr.html_url,
@@ -45,13 +45,10 @@ async function main(params) {
             await slackNotification(message, process.env.OKAN_SLACK_WEBHOOK);
         }
     } catch (error) {
-        console.error(`Error in fetching or notifying):`, error);
+        console.error(`Error fetching or notifying for PR(s):`, error);
     }
 }
 
-main().catch((error) => {
-    console.error('Error in notify-merge script:', error);
-    process.exit(1);
-});
+main();
 
 module.exports = main;
