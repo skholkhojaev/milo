@@ -25,7 +25,8 @@ const getMergedPRsForCommit = async (octokit) => {
 };
 
 async function main() {
-    const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+    const token = process.env.GITHUB_TOKEN;
+    const octokit = new Octokit({ auth: token });
 
     try {
         const prs = await getMergedPRsForCommit(octokit);
