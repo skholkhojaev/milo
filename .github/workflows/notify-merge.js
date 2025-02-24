@@ -6,6 +6,15 @@ const SLACK = {
 };
 // Test
 
+function getRepoInfo() {
+    const repoFull = process.env.GITHUB_REPOSITORY;
+    if (!repoFull) {
+        throw new Error("GITHUB_REPOSITORY is not defined in the environment.");
+    }
+    const [owner, repo] = repoFull.split('/');
+    return { owner, repo };
+}
+
 async function getPR(prNumber, owner, repo, token) {
     const url = `https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}`;
     const response = await fetch(url, {
