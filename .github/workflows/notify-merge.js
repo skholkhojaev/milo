@@ -1,55 +1,51 @@
 const { slackNotification } = require('./helpers.js');
 
+let github;
+let owner;
+let repo;
+
 const SLACK = {
     merge: ({ html_url, number, title, prefix = '' }) =>
         `:merged: PR merged to stage: ${prefix} <${html_url}|#${number}: ${title}>.`,
 };
-// Test
 
-function getRepoInfo() {
-    const repoFull = process.env.GITHUB_REPOSITORY;
-    if (!repoFull) {
-        throw new Error("GITHUB_REPOSITORY is not defined in the environment.");
-    }
-    const [owner, repo] = repoFull.split('/');
-    return { owner, repo };
-}
+const getMergedPRsForCommit = async () => {
+    const commitSha = process.env.GITHUB_SHA;
+    const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 
-async function getPR(prNumber, owner, repo, token) {
-    const url = `https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}`;
-    const response = await fetch(url, {
-        headers: {
-            Accept: 'application/vnd.github.v3+json',
-            Authorization: `token ${token}`,
-        },
+    const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+        owner,
+        repo,
+        commit_sha: commitSha,
     });
-    if (!response.ok) {
-        throw new Error(`Failed to fetch PR ${prNumber}: ${response.status}`);
-    }
-    return response.json();
-}
 
-async function main() {
-    const { owner, repo } = getRepoInfo();
+    return prs.map(pr => ({
+        number: pr.number,
+        title: pr.title,
+        owner: pr.user.login,
+        html_url: pr.html_url,
+    }));
+};
 
-    const githubToken = process.env.GITHUB_TOKEN;
+async function main(params) {
+    github = params.github;
+    owner = params.context.repo.owner;
+    repo = params.context.repo.repo;
 
-    if (prNumbers.size > 0) {
-        for (let prNumber of prNumbers) {
-            try {
-                const pr = await getPR(prNumber, owner, repo, githubToken);
-                const message = SLACK.merge({
-                    html_url: pr.html_url,
-                    number: pr.number,
-                    title: pr.title,
-                    prefix: '',
-                });
-                console.log(`Sending notification for PR #${pr.number}: ${pr.title}`);
-                await slackNotification(message, process.env.OKAN_SLACK_WEBHOOK);
-            } catch (error) {
-                console.error(`Error fetching or notifying for PR #${prNumber}:`, error);
-            }
+    try {
+        const prs = await getMergedPRsForCommit();
+        for (const pr of prs) {
+            const message = SLACK.merge({
+                html_url: pr.html_url,
+                number: pr.number,
+                title: pr.title,
+                prefix: '',
+            });
+            console.log(`Sending notification for PR #${pr.number}: ${pr.title}`);
+            await slackNotification(message, process.env.OKAN_SLACK_WEBHOOK);
         }
+    } catch (error) {
+        console.error(`Error in fetching or notifying):`, error);
     }
 }
 
