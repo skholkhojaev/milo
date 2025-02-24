@@ -1,16 +1,17 @@
 const { slackNotification } = require('./helpers.js');
+const { getOctokit, context } = require('@actions/github');
 
-let owner;
-let repo;
+const github = getOctokit(process.env.GITHUB_TOKEN);
+const owner = context.repo.owner;
+const repo = context.repo.repo;
 
 const SLACK = {
     merge: ({ html_url, number, title, prefix = '' }) =>
         `:merged: PR merged to stage: ${prefix} <${html_url}|#${number}: ${title}>.`,
 };
 
-const getMergedPRsForCommit = async (github) => {
+const getMergedPRsForCommit = async () => {
     const commitSha = process.env.GITHUB_SHA;
-    const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 
     const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
         owner,
@@ -26,13 +27,9 @@ const getMergedPRsForCommit = async (github) => {
     }));
 };
 
-async function main(params) {
-    const github = params.github;
-    owner = params.context.repo.owner;
-    repo = params.context.repo.repo;
-
+async function main() {
     try {
-        const prs = await getMergedPRsForCommit(github);
+        const prs = await getMergedPRsForCommit();
         for (const pr of prs) {
             const message = SLACK.merge({
                 html_url: pr.html_url,
@@ -50,7 +47,6 @@ async function main(params) {
 
 main().catch((error) => {
     console.error('Error in notify-merge script:', error);
-    process.exit(1);
 });
 
 module.exports = main;
