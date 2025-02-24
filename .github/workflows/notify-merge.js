@@ -1,5 +1,4 @@
 const { slackNotification } = require('./helpers.js');
-const title = require("../../tools/loc/helix/docx2md.bundle");
 
 let owner;
 let repo;
