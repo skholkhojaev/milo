@@ -4,7 +4,7 @@ const SLACK = {
     merge: ({ html_url, number, title, prefix = '' }) =>
         `:merged: PR merged to stage: ${prefix} <${html_url}|#${number}: ${title}>.`,
 };
-// Test
+// Kendrick Better than Drake
 
 function getRepoInfo() {
     const repoFull = process.env.GITHUB_REPOSITORY;
