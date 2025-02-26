@@ -7,7 +7,6 @@ const SLACK = {
 };
 
 const getCommitSha = () => {
-    console.log('entered getCommitSha');
     const commitSha = process.env.GITHUB_SHA;
     if (!commitSha) {
         throw new Error(
@@ -18,7 +17,6 @@ const getCommitSha = () => {
 };
 
 const getMergedPRs = async (github, context) => {
-    console.log('entered getMergedPrs');
     let owner, repo;
     if (context && context.repo) {
         owner = context.repo.owner;
@@ -70,7 +68,7 @@ async function main(params) {
     }
 }
 
-if (process.env.LOCAL_RUN) {
+if (process.env.LOCAL_RUN === 'true' && !process.env.CI) {
     const { github, context } = getLocalConfigs();
     main({ github, context });
 } else {
