@@ -5,12 +5,21 @@ on:
     branches:
       - stage
       - main
+
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm install
 
       - name: Run Notify-Merge Script
         run: node .github/workflows/notify-merge.js
@@ -22,5 +31,4 @@ jobs:
           REPO_NAME: ${{ secrets.REPO_NAME }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GITHUB_EVENT_PATH: './event.json'
-          GITHUB_SHA: ${{ secrets.GITHUB_SHA}}
-
+          GITHUB_SHA: ${{ secrets.GITHUB_SHA }}
