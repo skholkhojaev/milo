@@ -16,4 +16,11 @@ jobs:
         run: node .github/workflows/notify-merge.js
         env:
           OKAN_SLACK_WEBHOOK: ${{ secrets.OKAN_SLACK_WEBHOOK }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LOCAL_RUN: 'true'
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          REPO_OWNER: ${{ secrets.REPO_OWNER }}
+          REPO_NAME: ${{ secrets.REPO_NAME }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_EVENT_PATH: './event.json'
+          GITHUB_SHA: ${{ secrets.GITHUB_SHA}}
+

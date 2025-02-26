@@ -6,7 +6,19 @@ const SLACK = {
         `:merged: PR merged to stage: ${prefix} <${html_url}|#${number}: ${title}>.`,
 };
 
+const getCommitSha = () => {
+    console.log('entered getCommitSha');
+    const commitSha = process.env.GITHUB_SHA;
+    if (!commitSha) {
+        throw new Error(
+            "GITHUB_SHA is not set. For local testing, please add a valid commit SHA in your .env file."
+        );
+    }
+    return commitSha;
+};
+
 const getMergedPRs = async (github, context) => {
+    console.log('entered getMergedPrs');
     let owner, repo;
     if (context && context.repo) {
         owner = context.repo.owner;
@@ -14,7 +26,7 @@ const getMergedPRs = async (github, context) => {
     } else {
         [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
     }
-    const commitSha = process.env.GITHUB_SHA;
+    const commitSha = getCommitSha();
     const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
         owner,
         repo,
@@ -35,7 +47,7 @@ async function main(params) {
         github = params.github;
         context = params.context;
     } else {
-        const token = process.env.GITHUB_TOKEN;
+        const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
         github = new Octokit({ auth: token });
         const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
         context = { repo: { owner, repo } };
