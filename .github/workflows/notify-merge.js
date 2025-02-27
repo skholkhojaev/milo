@@ -50,8 +50,12 @@ async function main() {
     }
 }
 
-if (require.main === module) {
-    main().catch(error => console.error('Error in notify-merge script:', error));
+if (process.env.LOCAL_RUN) {
+    const { github, context } = getLocalConfigs();
+    main({
+        github,
+        context,
+    });
 }
 
 module.exports = main;
