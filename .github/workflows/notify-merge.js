@@ -16,13 +16,7 @@ const getCommitSha = () => {
 };
 
 const getMergedPRs = async (github, context) => {
-    let owner, repo;
-    if (context && context.repo) {
-        owner = context.repo.owner;
-        repo = context.repo.repo;
-    } else {
-        [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-    }
+    const { owner, repo } = context.repo;
     const commitSha = getCommitSha();
     const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
         owner,
@@ -38,17 +32,7 @@ const getMergedPRs = async (github, context) => {
 };
 
 async function main() {
-    let github, context;
-    if (process.env.CI) {
-        const token = process.env.GITHUB_TOKEN;
-        const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-        const { Octokit } = require('@octokit/rest');
-        github = { rest: new Octokit({ auth: token }) };
-        context = { repo: { owner, repo } };
-    } else {
-        ({ github, context } = getLocalConfigs());
-    }
-
+    const { github, context } = getLocalConfigs();
     try {
         const prs = await getMergedPRs(github, context);
         for (const pr of prs) {
@@ -67,9 +51,7 @@ async function main() {
 }
 
 if (require.main === module) {
-    main().catch((error) => {
-        console.error('Error in notify-merge script:', error);
-    });
+    main().catch(error => console.error('Error in notify-merge script:', error));
 }
 
 module.exports = main;
