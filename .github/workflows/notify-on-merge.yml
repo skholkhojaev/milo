@@ -13,18 +13,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Run Notify Merge with GitHub Script
+        uses: actions/github-script@v6
         with:
-          node-version: '20'
-
-      - name: Run Notify-Merge Script
-        run: node .github/workflows/notify-merge.js
+          script: |
         env:
           OKAN_SLACK_WEBHOOK: ${{ secrets.OKAN_SLACK_WEBHOOK }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           REPO_OWNER: ${{ secrets.REPO_OWNER }}
           REPO_NAME: ${{ secrets.REPO_NAME }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          GITHUB_EVENT_PATH: './event.json'
-          GITHUB_SHA: ${{ github.event.pull_request.merge_commit_sha }}
