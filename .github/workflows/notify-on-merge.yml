@@ -13,12 +13,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Run Notify Merge with GitHub Script
+        uses: actions/github-script@v6
         with:
-          node-version: '20'
-      - name: Run Notify-Merge Script
-        run: node .github/workflows/notify-merge.js
+          script: |
+            const notifyMerge = require('./.github/workflows/notify-merge.js');
+            await notifyMerge();
         env:
           OKAN_SLACK_WEBHOOK: ${{ secrets.OKAN_SLACK_WEBHOOK }}
           REPO_OWNER: ${{ github.repository_owner }}
