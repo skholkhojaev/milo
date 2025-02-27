@@ -1,5 +1,6 @@
+// notify-merge.js
+
 const { slackNotification, getLocalConfigs } = require('./helpers.js');
-const { Octokit } = require('@octokit/rest');
 
 const SLACK = {
     merge: ({ html_url, number, title, prefix = '' }) =>
@@ -39,17 +40,9 @@ const getMergedPRs = async (github, context) => {
     }));
 };
 
-async function main(params) {
-    let github, context;
-    if (params && params.github && params.context) {
-        github = params.github;
-        context = params.context;
-    } else {
-        const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-        github = new Octokit({ auth: token });
-        const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-        context = { repo: { owner, repo } };
-    }
+async function main() {
+    // Always get the GitHub client and context via getLocalConfigs
+    const { github, context } = getLocalConfigs();
 
     try {
         const prs = await getMergedPRs(github, context);
@@ -68,10 +61,7 @@ async function main(params) {
     }
 }
 
-if (process.env.LOCAL_RUN === 'true' && !process.env.CI) {
-    const { github, context } = getLocalConfigs();
-    main({ github, context });
-} else {
+if (require.main === module) {
     main().catch((error) => {
         console.error('Error in notify-merge script:', error);
     });
