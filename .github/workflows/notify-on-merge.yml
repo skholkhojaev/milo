@@ -1,4 +1,4 @@
-name: Notify on Merge
+name: Notify on Merge +1
 
 on:
   pull_request:
