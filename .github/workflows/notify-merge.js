@@ -31,8 +31,7 @@ const getMergedPRs = async (github, context) => {
     }));
 };
 
-async function main() {
-    const { github, context } = getLocalConfigs();
+async function main({ github, context }) {
     try {
         const prs = await getMergedPRs(github, context);
         for (const pr of prs) {
@@ -52,10 +51,7 @@ async function main() {
 
 if (process.env.LOCAL_RUN) {
     const { github, context } = getLocalConfigs();
-    main({
-        github,
-        context,
-    });
+    main({ github, context });
 }
 
 module.exports = main;
