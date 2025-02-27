@@ -4,7 +4,6 @@ const SLACK = {
     merge: ({ html_url, number, title, prefix = '' }) =>
         `:merged: PR merged to stage: ${prefix} <${html_url}|#${number}: ${title}>.`,
 };
-// I'll just write another test +4
 
 const getCommitSha = () => {
     const commitSha = process.env.GITHUB_SHA;
@@ -30,7 +29,6 @@ const getMergedPRs = async (github, context) => {
         repo,
         commit_sha: commitSha,
     });
-
     return prs.map(pr => ({
         number: pr.number,
         title: pr.title,
@@ -40,7 +38,17 @@ const getMergedPRs = async (github, context) => {
 };
 
 async function main() {
-    const { github, context } = getLocalConfigs();
+    let github, context;
+    if (process.env.CI) {
+        const token = process.env.GITHUB_TOKEN;
+        const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+        const { Octokit } = require('@octokit/rest');
+        github = { rest: new Octokit({ auth: token }) };
+        context = { repo: { owner, repo } };
+    } else {
+        ({ github, context } = getLocalConfigs());
+    }
+
     try {
         const prs = await getMergedPRs(github, context);
         for (const pr of prs) {
