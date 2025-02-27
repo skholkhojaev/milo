@@ -17,20 +17,13 @@ const getCommitSha = () => {
 };
 
 const getMergedPRs = async (github, context) => {
-    let owner, repo;
-    if (context && context.repo) {
-        owner = context.repo.owner;
-        repo = context.repo.repo;
-    } else {
-        [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-    }
+    const { owner, repo } = context.repo;
     const commitSha = getCommitSha();
     const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
         owner,
         repo,
         commit_sha: commitSha,
     });
-
     return prs.map(pr => ({
         number: pr.number,
         title: pr.title,
@@ -59,9 +52,7 @@ async function main() {
 }
 
 if (require.main === module) {
-    main().catch((error) => {
-        console.error('Error in notify-merge script:', error);
-    });
+    main().catch(error => console.error('Error in notify-merge script:', error));
 }
 
 module.exports = main;
