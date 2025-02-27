@@ -4,7 +4,7 @@ const SLACK = {
     merge: ({ html_url, number, title, prefix = '' }) =>
         `:merged: PR merged to stage: ${prefix} <${html_url}|#${number}: ${title}>.`,
 };
-
+// local 1
 const getCommitSha = () => {
     const commitSha = process.env.GITHUB_SHA;
     if (!commitSha) {
