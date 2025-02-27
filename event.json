@@ -1,0 +1,17 @@
+{
+  "commits": [
+    {
+      "id": "ITWOOORRKKSSS:yippee:",
+      "message": "Merge pull request #101 from feature-branch\n\nAdd new feature"
+    },
+    {
+      "id": "def456",
+      "message": "Some regular commit message"
+    },
+    {
+      "id": "ghi789",
+      "message": "Merge pull request #102 from bugfix\n\nFix bug in production"
+    }
+  ],
+  "after": "ghi789"
+}
