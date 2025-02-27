@@ -1,5 +1,3 @@
-// notify-merge.js
-
 const { slackNotification, getLocalConfigs } = require('./helpers.js');
 
 const SLACK = {
@@ -41,9 +39,7 @@ const getMergedPRs = async (github, context) => {
 };
 
 async function main() {
-    // Always get the GitHub client and context via getLocalConfigs
     const { github, context } = getLocalConfigs();
-
     try {
         const prs = await getMergedPRs(github, context);
         for (const pr of prs) {
