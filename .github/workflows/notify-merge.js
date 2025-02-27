@@ -31,7 +31,11 @@ const getMergedPRs = async (github, context) => {
     }));
 };
 
-async function main({ github, context }) {
+async function main({ github, context } = {}) {
+    if (!github || !context) {
+        console.log("Skipping execution since no local github context is provided.");
+        return;
+    }
     try {
         const prs = await getMergedPRs(github, context);
         for (const pr of prs) {
@@ -48,6 +52,7 @@ async function main({ github, context }) {
         console.error('Error fetching or notifying for PR(s):', error);
     }
 }
+
 
 if (process.env.LOCAL_RUN) {
     const { github, context } = getLocalConfigs();
