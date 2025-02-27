@@ -23,3 +23,5 @@ jobs:
           REPO_OWNER: ${{ secrets.REPO_OWNER }}
           REPO_NAME: ${{ secrets.REPO_NAME }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_EVENT_PATH: './event.json'
+          GITHUB_SHA: ${{ secrets.GITHUB_SHA }}
