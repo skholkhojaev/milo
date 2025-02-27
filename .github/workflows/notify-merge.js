@@ -6,6 +6,7 @@ const SLACK = {
         `:merged: PR merged to stage: ${prefix} <${html_url}|#${number}: ${title}>.`,
 };
 // Testing if yml works
+// I'll just write another test
 
 const getCommitSha = () => {
     const commitSha = process.env.GITHUB_SHA;
