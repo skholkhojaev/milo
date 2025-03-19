@@ -21,4 +21,4 @@ jobs:
             const notifyMerge = require('./.github/workflows/notify-on-merge.js');
             await notifyMerge({ github, context });
         env:
-          OKAN_SLACK_WEBHOOK: ${{ secrets.OKAN_SLACK_WEBHOOK }}
+          MILO_RELEASE_SLACK_WH: ${{ secrets.MILO_RELEASE_SLACK_WH }}
