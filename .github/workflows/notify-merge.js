@@ -33,9 +33,14 @@ const getMergedPRs = async (github, context) => {
 
 async function main({ github, context } = {}) {
     if (!github || !context) {
-        const localConfigs = getLocalConfigs();
-        github = github || localConfigs.github;
-        context = context || localConfigs.context;
+        if (process.env.LOCAL_RUN) {
+            console.log("Local run detected. Loading local configurations...");
+            const localConfigs = getLocalConfigs();
+            github = localConfigs.github;
+            context = localConfigs.context;
+        } else {
+            throw new Error("GitHub context is missing. Ensure you are running in the correct environment.");
+        }
     }
 
     try {
@@ -53,6 +58,7 @@ async function main({ github, context } = {}) {
     } catch (error) {
         console.error('Error fetching or notifying for PR(s):', error);
     }
+
 }
 
 if (process.env.LOCAL_RUN) {
