@@ -4,7 +4,6 @@ const SLACK = {
     merge: ({ html_url, number, title, prefix = '' }) =>
         `:merged: PR merged to stage: ${prefix} <${html_url}|#${number}: ${title}>.`,
 };
-// Testtest SLACK
 
 const getCommitSha = () => {
     const commitSha = process.env.GITHUB_SHA;
@@ -34,9 +33,11 @@ const getMergedPRs = async (github, context) => {
 
 async function main({ github, context } = {}) {
     if (!github || !context) {
-        console.log("Skipping execution since no local github context is provided.");
-        return;
+        const localConfigs = getLocalConfigs();
+        github = github || localConfigs.github;
+        context = context || localConfigs.context;
     }
+
     try {
         const prs = await getMergedPRs(github, context);
         for (const pr of prs) {
@@ -53,7 +54,6 @@ async function main({ github, context } = {}) {
         console.error('Error fetching or notifying for PR(s):', error);
     }
 }
-
 
 if (process.env.LOCAL_RUN) {
     const { github, context } = getLocalConfigs();
