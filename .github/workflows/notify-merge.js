@@ -41,6 +41,7 @@ async function main({ github, context } = {}) {
         } else {
             throw new Error("GitHub context is missing. Ensure you are running in the correct environment.");
         }
+
     }
 
     try {
@@ -58,6 +59,7 @@ async function main({ github, context } = {}) {
     } catch (error) {
         console.error('Error fetching or notifying for PR(s):', error);
     }
+
 
 }
 
