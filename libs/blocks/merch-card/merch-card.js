@@ -226,6 +226,7 @@ const parseContent = async (el, merchCard) => {
   ];
 
   innerElements.forEach((element) => {
+    if (!element.innerHTML.trim()) return;
     let { tagName } = element;
     if (isHeadingTag(tagName)) {
       let slotName = SLOT_MAP[merchCard.variant]?.[tagName] || SLOT_MAP_DEFAULT[tagName];
@@ -527,6 +528,19 @@ const addStartingAt = async (styles, merchCard) => {
 
 export default async function init(el) {
   if (!el.querySelector(INNER_ELEMENTS_SELECTOR)) return el;
+  // TODO: Remove after bugfix PR adobe/helix-html2md#556 is merged
+  const liELs = el.querySelectorAll('ul li');
+  if (liELs) {
+    [...liELs].forEach((liEl) => {
+      liEl.querySelectorAll('p').forEach((pElement) => {
+        while (pElement?.firstChild) {
+          pElement.parentNode.insertBefore(pElement.firstChild, pElement);
+        }
+        pElement.remove();
+      });
+    });
+  }
+  // TODO: Remove after bugfix PR adobe/helix-html2md#556 is merged
   const styles = [...el.classList];
   const cardType = getPodType(styles) || PRODUCT;
   if (!styles.includes(cardType)) {
@@ -663,7 +677,10 @@ export default async function init(el) {
       const merchIcon = createTag('merch-icon', { slot: 'icons', src: icon.src, alt: icon.alt, href: icon.href, size: 'l' });
       merchCard.appendChild(merchIcon);
     });
-    icons.forEach((icon) => icon.remove());
+    icons.forEach((icon) => {
+      if (icon.parentElement.nodeName === 'A') icon.parentElement.remove();
+      else icon.remove();
+    });
   }
 
   addStock(merchCard, styles);

@@ -76,6 +76,7 @@ const defaultOptions = {
     product: 'Product Card',
     'text-card': 'Text Card',
     'icon-card': 'Icon Card',
+    'news-card': 'News Card',
     'custom-card': 'Custom Card',
   },
   collectionBtnStyle: {
@@ -213,6 +214,7 @@ const defaultOptions = {
     default: 'Default',
     createdDate: 'Created Date',
     modifiedDate: 'Modified Date',
+    staticDate: 'Static Date',
   },
   cardHoverEffect: {
     default: 'Default',
