@@ -1,0 +1,27 @@
+name: Notify on Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  if_merged:
+    if: ${{ github.event.pull_request.merged == true && (github.event.pull_request.base.ref == 'stage' || github.event.pull_request.base.ref == 'main') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Notify Merge with GitHub Script
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const notifyMerge = require('./.github/workflows/notify-merge.js');
+            await notifyMerge({ github, context });
+        env:
+          OKAN_SLACK_WEBHOOK: ${{ secrets.OKAN_SLACK_WEBHOOK }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_SHA: ${{ github.sha }}
