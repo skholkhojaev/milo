@@ -18,10 +18,12 @@ jobs:
         with:
           script: |
             const notifyMerge = require('./.github/workflows/notify-merge.js');
-            await notifyMerge();
+            // Pass the provided github and context objects to your function
+            await notifyMerge({ github, context });
         env:
           OKAN_SLACK_WEBHOOK: ${{ secrets.OKAN_SLACK_WEBHOOK }}
           REPO_OWNER: ${{ github.repository_owner }}
           REPO_NAME: ${{ github.event.repository.name }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_SHA: ${{ github.sha }}
+
