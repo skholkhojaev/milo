@@ -23,7 +23,7 @@ async function main({ github, context } = {}) {
 
   await slackNotification(
     `:merged: PR merged to stage <${html_url}|#${number}: ${title}>.`,
-    process.env.OKAN_SLACK_WEBHOOK
+    process.env.MILO_RELEASE_SLACK_WH
   );
 }
 
