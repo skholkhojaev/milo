@@ -1,4 +1,3 @@
-# [Due Diligence] Improve milo core automation guidance
 
 We have two problems in our PR automation system: **Stale Label Interference & Notification Spam**
 
@@ -10,16 +9,18 @@ Another issue we have is that the PRs are too cramped with all the Notification 
 In this [Ticket](https://jira.corp.adobe.com/browse/MWPW-168241) it was proposed that we implement a Unified Notification System (UNS) which is one big comment in each PR that every workflow can edit instead of creating a new comment, the UNS will contain a log and history of each workflow, failing tests, guidance on why a PR wasn't merged + how to fix failing checks
 
 The UNS will supersede all the **Merge-Related Workflows**, **Test & Quality Workflows**, **PR Management Workflows**, **Special Notifications** (high-impact, zero-impact, etc.)
-
+and if you want to see more details about which exact workflows and what about them please checkout [link]
 <how each workflow will be logged>
 
-all of the notification will have a title of the workflow and a timestamp of when it was logged, then depending on the workflow it will have the necessery information of the log, for example a failing Unit Test will include the `path` of the test, `Error` message and a `fix`, or hint on how to fix it, to see more detail read this.
+in the log all of the workflows will have a title and a timestamp of when it was logged, and depending on the workflow it will have different informations, for example a failing Unit Test will include the `path` of the test, `Error` message and a `fix`, or hint on how to fix the unit test.
+
+if you want to read more about formatting and details of the log please refer to [link].
 
 <detail of workflows.... this can be written in a different file and link it if the reader interests themselves in reading more>
 
 <removed workflows>
 
-in the UNS we wont be needing for workflows like `pr-reminders` since we will be having giving hints and fixes in the UNS on how to pass the failing checks
+the UNS we wont be needing for workflows like `pr-reminders` since we will be having giving hints and fixes in the UNS on how to pass the failing checks
 
 ### Timeline fromat example:
 ```
