@@ -1,18 +1,23 @@
+# [Due Diligence] Improve milo core automation guidance
 
 We have two problems in our PR automation system: **Stale Label Interference & Notification Spam**
 
 The Stale System Runs daily at midnight and labels PRs that did not have any Updates for the past 7 days, and after another 7 days of inactivity closes that PR. There is an interference happening with other workflows that add comments to PRs which then resets the Stale System confusing those comments as an "update" to the PR, which then resets the timer back to 0 and removed the Label from that PR.
 
-Another issue we have is that the PRs are too cramped with all the Notification Spams that is happening from different workflows such as PR Reminders, Test (Unit/Nala), Ready for Stage label, and etc. 
+Another issue we have is that the PRs are too cramped with all the Notification Spams that are happening from different workflows. The PR Reminders workflow for example posts a comment on the PR that has a failing check, and these checks can be anything between failing a UnitTest, eslint or a psi-check.\
+The two other workflows that post a comment independent on the `pr-reminders.js` are, `merge-stage` and `label-zero-impact`.
+
+outside of the workflows the review dog can get incredibly spammy and annoying on bigger PRs. [example ](https://github.com/adobecom/milo/pull/3899#discussion_r2027375469) 👈
 
 ## Solution proposal
-In this [Ticket](https://jira.corp.adobe.com/browse/MWPW-168241) it was proposed that we implement a Unified Notification System (UNS) which is one big comment in each PR that every workflow can edit instead of creating a new comment, the UNS will contain a log and history of each workflow, failing tests, guidance on why a PR wasn't merged + how to fix failing checks
+In this [Ticket](https://jira.corp.adobe.com/browse/MWPW-168241) it was proposed that we implement a **Unified Notification System (UNS)** which is one big comment in each PR that every workflow can edit instead of creating a new comment everytime. The UNS will contain a log and history of each workflow, failing tests, guidance on why a PR wasn't merged + how to fix failing checks, this will help with the readability and not interfere with the `Stale` workflow.
 
-The UNS will supersede all the **Merge-Related Workflows**, **Test & Quality Workflows**, **PR Management Workflows**, **Special Notifications** (high-impact, zero-impact, etc.)
-and if you want to see more details about which exact workflows and what about them please checkout [link]
-<how each workflow will be logged>
+When moving to UNS we only need to modify three workflwos that post comments in the github PRs, `pr-reminders`, `label-zero-impact`, `merge-to-stage`.
+the rest of the worfklows such as testing workflows as an example will check for failling tests and if any found it will call the [pr-reminders.js](https://github.com/adobecom/milo/pull/3899#issuecomment-2777355886) to write a comment and inform that not all the checks are passing.
 
-in the log all of the workflows will have a title and a timestamp of when it was logged, and depending on the workflow it will have different informations, for example a failing Unit Test will include the `path` of the test, `Error` message and a `fix`, or hint on how to fix the unit test.
+In the UNS the `pr-reminders` workflow that posts a commment in the PR informing the developers of a failing check should be removed, instead each workflow should update the UNS by themselves or there should be a different workflow that will do it for them.
+
+Each workflow will have a title and a timestamp of when it was logged by default, and depending on the workflow it will have different informations. For example a failing Unit Test will include the `path` of the test, `Error` message and a `fix`, or hint on how to fix the unit test. 
 
 if you want to read more about formatting and details of the log please refer to [link].
 
@@ -20,7 +25,6 @@ if you want to read more about formatting and details of the log please refer to
 
 <removed workflows>
 
-the UNS we wont be needing for workflows like `pr-reminders` since we will be having giving hints and fixes in the UNS on how to pass the failing checks
 
 ### Timeline fromat example:
 ```
@@ -68,4 +72,4 @@ the UNS we wont be needing for workflows like `pr-reminders` since we will be ha
 ```
 
 ## Conclusion
-forcing all the workflows to write in UNS and not having a dedicated comment for each workflow will not only help the overview of the PR but also the Stale workflow.
+forcing all the workflows to write into the UNS will not only help the overview of the PR but also the Stale workflow.
