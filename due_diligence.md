@@ -2,7 +2,7 @@
 
 We have two problems in our PR automation system: **Stale Label Interference & Notification Spam**
 
-The Stale System Runs daily at midnight and labels PRs that did not have any Updates for the past 7 days, and after another 7 days of inactivity closes that PR. There is an interference happening with other workflows that add comments to PRs which then resets the Stale System confusing those comments as an "update" to the PR, which then resets the timer back to 0 and removed the Label from that PR.
+The Stale System Runs daily at midnight and labels PRs that did not have any Updates for the past 7 days, and after another 7 days of inactivity closes that PR. There is an interference happening with other workflows that add comments to PRs which then resets the Stale System confusing those comments as an "update" to the PR, the Stale workflow then resets the timer back to 0 and removed the Label from that PR.
 
 Another issue we have is that the PRs are too cramped with all the Notification Spams that are happening from different workflows. The PR Reminders workflow for example posts a comment on the PR that has a failing check, and these checks can be anything between failing a UnitTest, eslint or a psi-check.\
 The two other workflows that post a comment independent on the `pr-reminders.js` are, `merge-stage` and `label-zero-impact`.
