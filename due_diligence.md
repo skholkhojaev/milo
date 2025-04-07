@@ -20,7 +20,7 @@ In the UNS the `pr-reminders` workflow that posts a commment in the PR informing
 Each workflow will have a title and a timestamp of when it was logged by default, and depending on the workflow it will have different informations. For example a failing Unit Test will include the `path` of the test, `Error` message and a `fix`, or hint on how to fix the unit test. 
 
 ### Timeline fromat example:
-```
+```md
 Merge Status
 <!-- Supersedes merge-to-stage notifications and merge-to-main sync status-->
 15.03.2024: PR was not merged due to insufficient reviews (2/2 required)
