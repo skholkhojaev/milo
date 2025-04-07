@@ -20,49 +20,50 @@ In the UNS the `pr-reminders` workflow that posts a commment in the PR informing
 Each workflow will have a title and a timestamp of when it was logged by default, and depending on the workflow it will have different informations. For example a failing Unit Test will include the `path` of the test, `Error` message and a `fix`, or hint on how to fix the unit test. 
 
 ### Timeline fromat example:
-```
-// Supersedes merge-to-stage notifications and merge-to-main sync status
-### Merge Status
+<!-- Supersedes merge-to-stage notifications and merge-to-main sync status -->
+Merge Status
 15.03.2024: PR was not merged due to insufficient reviews (2/2 required)
 16.03.2024: PR was not merged as the merge-to-stage batch is already full (8/8 PRs)
 17.03.2024: PR was not merged due to failing tests
 19.03.2024: PR merged to stage successfully
 
-// Supersedes individual test failure notifications
-### Test Results
+<!-- Supersedes individual test failure notifications -->
+Test Results
 15.03.2024: Unit tests failed in test/unit/test.js
-    - Error: Timeout in async test
-    - Fix: Rebase to stage to resolve timing issues
+Error: Timeout in async test
+Fix: Rebase to stage to resolve timing issues
+
 16.03.2024: Nala tests failed in test/nala/test.js
-    - Error: MAS test timeout
-    - Fix: Rebase to stage to resolve test environment issues
+Error: MAS test timeout
+Fix: Rebase to stage to resolve test environment issues
 17.03.2024: All tests passing after rebase
 
-// Supersedes linting and code quality notifications
-### Code Quality
+<!-- Supersedes linting and code quality notifications -->
+Code Quality
 15.03.2024: ESLint errors in src/js/main.js
-    - Error: Missing semicolon
-    - Fix: Add semicolon at line 42
-16.03.2024: Code compatibility warning
-    - Warning: Using deprecated API
-    - Fix: Update to new API version
+Error: Missing semicolon
+Fix: Add semicolon at line 42
 
-// Supersedes PR management notifications
-### PR Status
+16.03.2024: Code compatibility warning
+Warning: Using deprecated API
+Fix: Update to new API version
+
+<!-- Supersedes PR management notifications -->
+PR Status
 15.03.2024: Needs verification from QA team
 16.03.2024: Verified by QA team
 17.03.2024: Ready for stage (2/2 approvals)
 18.03.2024: High impact change detected
-    - Warning: Changes affect multiple components
-    - Action: Review impact with team
+Warning: Changes affect multiple components
+Action: Review impact with team
 
-// New feature - Branch sync recommendations
-### Branch Health
+<!-- New feature - Branch sync recommendations -->
+Branch Health
 15.03.2024: Branch is 5 commits behind stage
-    - Recommendation: Rebase to stage to avoid conflicts
+Recommendation: Rebase to stage to avoid conflicts
+
 16.03.2024: Branch synced with stage
 17.03.2024: No conflicts detected
-```
 if you want to read more about formatting and details of the log please refer to [link].
 
 ## Conclusion
