@@ -20,12 +20,12 @@ In the UNS the `pr-reminders` workflow that posts a commment in the PR informing
 Each workflow will have a title and a timestamp of when it was logged by default, and depending on the workflow it will have different informations. For example a failing Unit Test will include the `path` of the test, `Error` message and a `fix`, or hint on how to fix the unit test. 
 
 ### Timeline fromat example:
-> Supersedes merge-to-stage notifications and merge-to-main sync status
-
-Merge Status\
-15.03.2024: PR was not merged due to insufficient reviews (2/2 required)\
-16.03.2024: PR was not merged as the merge-to-stage batch is already full (8/8 PRs)\
-17.03.2024: PR was not merged due to failing tests\
+```
+Merge Status
+<!-- Supersedes merge-to-stage notifications and merge-to-main sync status-->
+15.03.2024: PR was not merged due to insufficient reviews (2/2 required)
+16.03.2024: PR was not merged as the merge-to-stage batch is already full (8/8 PRs)
+17.03.2024: PR was not merged due to failing tests
 19.03.2024: PR merged to stage successfully
 
 <!-- Supersedes individual test failure notifications -->
@@ -66,13 +66,7 @@ Recommendation: Rebase to stage to avoid conflicts
 16.03.2024: Branch synced with stage
 17.03.2024: No conflicts detected
 if you want to read more about formatting and details of the log please refer to [link].
+```
 
 ## Conclusion
 forcing all the workflows to write into the UNS will not only help the overview of the PR but also the Stale workflow.
-
-
-
-```md
-<!-- comment -->
-this is a test
- ```
