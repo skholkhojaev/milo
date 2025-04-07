@@ -15,9 +15,7 @@ In this [Ticket](https://jira.corp.adobe.com/browse/MWPW-168241) it was proposed
 When moving to UNS we only need to modify three workflwos that post comments in the github PRs, `pr-reminders`, `label-zero-impact`, `merge-to-stage`.
 the rest of the worfklows such as testing workflows as an example will check for failling tests and if any found it will call the [pr-reminders.js](https://github.com/adobecom/milo/pull/3899#issuecomment-2777355886) to write a comment and inform that not all the checks are passing.
 
-In the UNS the `pr-reminders` workflow that posts a commment in the PR informing the developers of a failing check should be removed, instead each workflow should update the UNS by themselves or there should be a different workflow that will do it for them.
-
-There should be workflows that will be shown in the UNS regardless if they pass or fail such as Merge Status, but some workflows can be shown in the UNS only if they raise an issue, to clear out space and keep UNS clean. By default the workflows will have a title and a timestamp of when it was logged, and depending on the workflow it will have different informations. For example a failing Unit Test will include the `path` of the test, `Error` message and a `fix` or hint on how to fix the unit test. 
+As for the formatting of the UNS and how it will look like, we should agree on workflows that will be shown in the UNS regardless if they pass or fail the check such as Merge Status, and leave the other workflows to be shown only if they raise an issue, this will help to have a clear overview and keep the UNS clean. By default the workflows will have a title and a timestamp of when it was logged, and depending on the workflow it shoudl show more informations. For example a failing Unit Test will include the `path` of the test, `Error` message and a `fix` or hint on how to fix the unit test. 
 
 ### Timeline fromat example:
 ```md
