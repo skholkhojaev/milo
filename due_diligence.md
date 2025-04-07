@@ -39,13 +39,9 @@ Fix: Rebase to stage to resolve test environment issues
 
 <!-- Supersedes linting and code quality notifications -->
 Code Quality
-15.03.2024: ESLint errors in src/js/main.js
+ESLint errors in src/js/main.js
 Error: Missing semicolon
 Fix: Add semicolon at line 42
-
-16.03.2024: Code compatibility warning
-Warning: Using deprecated API
-Fix: Update to new API version
 
 <!-- Supersedes PR management notifications -->
 PR Status
@@ -56,7 +52,7 @@ PR Status
 Warning: Changes affect multiple components
 Action: Review impact with team
 
-<!-- New feature - Branch sync recommendations -->
+<!-- Branch sync recommendations -->
 Branch Health
 15.03.2024: Branch is 5 commits behind stage
 Recommendation: Rebase to stage to avoid conflicts
@@ -64,6 +60,9 @@ Recommendation: Rebase to stage to avoid conflicts
 16.03.2024: Branch synced with stage
 17.03.2024: No conflicts detected
 if you want to read more about formatting and details of the log please refer to [link].
+
+<!-- For presistent or repetitive issues to not overwhelm the UNS -->
+According to [workflow](https://link-to-workflow) there are several issues that need to be addressed. Check the workflow to gather details or run X locally...
 ```
 
 ## Conclusion
