@@ -62,7 +62,8 @@ Recommendation: Rebase to stage to avoid conflicts
 if you want to read more about formatting and details of the log please refer to [link].
 
 <!-- For presistent or repetitive issues to not overwhelm the UNS -->
-According to [workflow](https://link-to-workflow) there are several issues that need to be addressed. Check the workflow to gather details or run X locally...
+According to [workflow](https://link-to-workflow) there are several issues that need to be addressed.
+Check the workflow to gather details or run X locally...
 ```
 
 ## Conclusion
