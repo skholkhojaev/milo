@@ -17,7 +17,7 @@ the rest of the worfklows such as testing workflows as an example will check for
 
 In the UNS the `pr-reminders` workflow that posts a commment in the PR informing the developers of a failing check should be removed, instead each workflow should update the UNS by themselves or there should be a different workflow that will do it for them.
 
-Each workflow will have a title and a timestamp of when it was logged by default, and depending on the workflow it will have different informations. For example a failing Unit Test will include the `path` of the test, `Error` message and a `fix`, or hint on how to fix the unit test. 
+There should be workflows that will be shown in the UNS regardless if they pass or fail such as Merge Status, but some workflows can be shown in the UNS only if they raise an issue, to clear out space and keep UNS clean. By default the workflows will have a title and a timestamp of when it was logged, and depending on the workflow it will have different informations. For example a failing Unit Test will include the `path` of the test, `Error` message and a `fix` or hint on how to fix the unit test. 
 
 ### Timeline fromat example:
 ```md
@@ -70,4 +70,3 @@ if you want to read more about formatting and details of the log please refer to
 
 ## Conclusion
 Forcing all the workflows to write into the UNS will not only help the overview of the PR but also the Stale workflow. We will have a strong framework to add future checks and guidance to contributors to milo to ensure developer velocity.
-
