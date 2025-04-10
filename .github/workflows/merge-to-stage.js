@@ -5,7 +5,6 @@ const {
   pulls: { addLabels, addFiles, getChecks, getReviews },
 } = require('./helpers.js');
 
-// Run from the root of the project for local testing: node --env-file=.env .github/workflows/merge-to-stage.js
 const PR_TITLE = '[Release] Stage to Main';
 const REQUIRED_APPROVALS = process.env.REQUIRED_APPROVALS ? Number(process.env.REQUIRED_APPROVALS) : 2;
 const MAX_MERGES = process.env.MAX_PRS_PER_BATCH ? Number(process.env.MAX_PRS_PER_BATCH) : 8;
@@ -19,12 +18,12 @@ const LABELS = {
   zeroImpact: 'zero-impact',
 };
 const TEAM_MENTIONS = [
-  '@adobecom/bacom-sot',
-  '@adobecom/creative-cloud-sot',
-  '@adobecom/document-cloud-sot',
-  '@adobecom/express-sot',
-  '@adobecom/homepage-sot',
-  '@adobecom/miq-sot',
+  '@secretcom/bacom-sot',
+  '@secretcom/creative-cloud-sot',
+  '@secretcom/document-cloud-sot',
+  '@secretcom/express-sot',
+  '@secretcom/homepage-sot',
+  '@secretcom/miq-sot',
 ];
 const SLACK = {
   openedSyncPr: ({ html_url, number }) => `:fast_forward: Created <${html_url}|Stage to Main PR ${number}>`,
@@ -36,15 +35,15 @@ let repo;
 
 let body = `
 ## common base root URLs
-**Homepage :** https://www.stage.adobe.com/
-**BACOM:** https://business.stage.adobe.com/fr/
-**CC:** https://www.stage.adobe.com/creativecloud.html
-**Blog:** https://blog.stage.adobe.com/
-**Acrobat:** https://www.stage.adobe.com/acrobat/online/sign-pdf.html
+**Homepage :** https://www.stage.secret.com/
+**BACOM:** https://business.stage.secret.com/fr/
+**CC:** https://www.stage.secret.com/creativecloud.html
+**Blog:** https://blog.stage.secret.com/
+**Acrobat:** https://www.stage.secret.com/acrobat/online/sign-pdf.html
 
 **Milo:**
-- Before: https://main--milo--adobecom.aem.live/?martech=off
-- After: https://stage--milo--adobecom.aem.live/?martech=off
+- Before: https://main--milo--secretcom.aem.live/?martech=off
+- After: https://stage--milo--secretcom.aem.live/?martech=off
 `;
 
 const isHighPrio = (labels) => labels.includes(LABELS.highPriority);
@@ -58,7 +57,7 @@ const hasFailingChecks = (checks) =>
   );
 
 const commentOnPR = async (comment, prNumber) => {
-  console.log(comment); // Logs for debugging the action.
+  console.log(comment);
   const { data: comments } = await github.rest.issues.listComments({
     owner,
     repo,
@@ -153,7 +152,7 @@ const getStageToMainPR = () => github.rest.pulls
   .list({ owner, repo, state: 'open', base: PROD })
   .then(({ data } = {}) => data.find(({ title } = {}) => title === PR_TITLE))
   .then((pr) => pr && addLabels({ pr, github, owner, repo }))
-  .then((pr) => pr && addFiles({ pr, github, owner, repo }))
+  .then((pr) => pr && addFiles({ pr, github, owner, repo }));
 
 const openStageToMainPR = async () => {
   const { data: comparisonData } = await github.rest.repos.compareCommits({
@@ -215,7 +214,25 @@ const main = async (params) => {
     const stageToMainPR = await getStageToMainPR();
     console.log('has Stage to Main PR:', !!stageToMainPR);
     if (stageToMainPR) body = stageToMainPR.body;
-    existingPRCount = body.match(/https:\/\/github\.com\/adobecom\/milo\/pull\/\d+/g)?.length || 0;
+
+    const { data: comparisonData } = await github.rest.repos.compareCommits({
+      owner,
+      repo,
+      base: PROD,
+      head: STAGE,
+    });
+    for (const commit of comparisonData.commits) {
+      const { data: pullRequestData } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+        owner,
+        repo,
+        commit_sha: commit.sha,
+      });
+      for (const pr of pullRequestData) {
+        if (!body.includes(pr.html_url)) body = `- ${pr.html_url}\n${body}`;
+      }
+    }
+
+    existingPRCount = body.match(/https:\/\/github\.com\/secretcom\/milo\/pull\/\d+/g)?.length || 0;
     console.log(`Number of PRs already in the batch: ${existingPRCount}`);
 
     if (mergeLimitExceeded()) return console.log(`Maximum number of '${MAX_MERGES}' PRs already merged. Stopping execution`);
