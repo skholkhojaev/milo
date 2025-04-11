@@ -18,12 +18,12 @@ const LABELS = {
   zeroImpact: 'zero-impact',
 };
 const TEAM_MENTIONS = [
-  '@secretcom/bacom-sot',
-  '@secretcom/creative-cloud-sot',
-  '@secretcom/document-cloud-sot',
-  '@secretcom/express-sot',
-  '@secretcom/homepage-sot',
-  '@secretcom/miq-sot',
+  '@adobecom/bacom-sot',
+  '@adobecom/creative-cloud-sot',
+  '@adobecom/document-cloud-sot',
+  '@adobecom/express-sot',
+  '@adobecom/homepage-sot',
+  '@adobecom/miq-sot',
 ];
 const SLACK = {
   openedSyncPr: ({ html_url, number }) => `:fast_forward: Created <${html_url}|Stage to Main PR ${number}>`,
@@ -35,15 +35,15 @@ let repo;
 
 let body = `
 ## common base root URLs
-**Homepage :** https://www.stage.secret.com/
-**BACOM:** https://business.stage.secret.com/fr/
-**CC:** https://www.stage.secret.com/creativecloud.html
-**Blog:** https://blog.stage.secret.com/
-**Acrobat:** https://www.stage.secret.com/acrobat/online/sign-pdf.html
+**Homepage :** https://www.stage.adobe.com/
+**BACOM:** https://business.stage.adobe.com/fr/
+**CC:** https://www.stage.adobe.com/creativecloud.html
+**Blog:** https://blog.stage.adobe.com/
+**Acrobat:** https://www.stage.adobe.com/acrobat/online/sign-pdf.html
 
 **Milo:**
-- Before: https://main--milo--secretcom.aem.live/?martech=off
-- After: https://stage--milo--secretcom.aem.live/?martech=off
+- Before: https://main--milo--adobecom.aem.live/?martech=off
+- After: https://stage--milo--adobecom.aem.live/?martech=off
 `;
 
 const isHighPrio = (labels) => labels.includes(LABELS.highPriority);
@@ -232,7 +232,7 @@ const main = async (params) => {
       }
     }
 
-    existingPRCount = body.match(/https:\/\/github\.com\/secretcom\/milo\/pull\/\d+/g)?.length || 0;
+    existingPRCount = body.match(/https:\/\/github\.com\/adobecom\/milo\/pull\/\d+/g)?.length || 0;
     console.log(`Number of PRs already in the batch: ${existingPRCount}`);
 
     if (mergeLimitExceeded()) return console.log(`Maximum number of '${MAX_MERGES}' PRs already merged. Stopping execution`);
