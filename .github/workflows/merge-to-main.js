@@ -8,10 +8,12 @@ const {
 const PR_TITLE = '[Release] Stage to Main';
 const STAGE = 'stage';
 const PROD = 'main';
-const MIN_SOT_APPROVALS = process.env.MIN_SOT_APPROVALS ? Number(process.env.MIN_SOT_APPROVALS) : 0;
+const MIN_SOT_APPROVALS = process.env.MIN_SOT_APPROVALS ? Number(process.env.MIN_SOT_APPROVALS) : 1;
 
 let github, owner, repo;
 
+// Just for testing
+// one more for the good measure
 const getStageToMainPR = () =>
   github.rest.pulls
     .list({ owner, repo, state: 'open', base: PROD, head: STAGE })
