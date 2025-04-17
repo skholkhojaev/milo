@@ -14,6 +14,7 @@ const MIN_SOT_APPROVALS = process.env.MIN_SOT_APPROVALS ? Number(process.env.MIN
 let github, owner, repo;
 
 // Just for testing
+// one more for the good measure
 const getStageToMainPR = () =>
   github.rest.pulls
     .list({ owner, repo, state: 'open', base: PROD, head: STAGE })
