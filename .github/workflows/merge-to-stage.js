@@ -218,6 +218,27 @@ const main = async (params) => {
     existingPRCount = body.match(/https:\/\/github\.com\/adobecom\/milo\/pull\/\d+/g)?.length || 0;
     console.log(`Number of PRs already in the batch: ${existingPRCount}`);
 
+    // Handle immediate update for merged PRs
+    if (params.context.eventName === 'pull_request_target' && params.context.payload.pull_request.merged) {
+      const mergedPR = params.context.payload.pull_request;
+      if (!body.includes(mergedPR.html_url)) {
+        body = `- ${mergedPR.html_url}\n${body}`;
+        if (stageToMainPR) {
+          console.log("Updating PR's body with merged PR...");
+          await github.rest.pulls.update({
+            owner,
+            repo,
+            pull_number: stageToMainPR.number,
+            body,
+          });
+          console.log(`Updated Stage to Main PR #${stageToMainPR.number} with merged PR #${mergedPR.number}`);
+        } else {
+          await openStageToMainPR();
+        }
+      }
+      return; // Exit after handling the immediate update
+    }
+
     if (mergeLimitExceeded()) return console.log(`Maximum number of '${MAX_MERGES}' PRs already merged. Stopping execution`);
 
     const { zeroImpactPRs, highImpactPRs, normalPRs } = await getPRs();
