@@ -98,7 +98,7 @@ const isWithinPrePostRCP = ({ offset = 7 } = {}) => {
   const now = new Date();
   return RCPDates.some(({ start, end }) => {
     if (now >= start && now <= end) {
-      return true;
+      return true; // return true if current time is within the RCP period
     }
     const preRCPStart = new Date(start);
     preRCPStart.setDate(preRCPStart.getDate() - offset);
