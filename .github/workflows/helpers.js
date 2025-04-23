@@ -60,10 +60,6 @@ const RCPDates = [
     start: new Date('2025-12-14T00:00:00-08:00'),
     end: new Date('2026-01-04T00:00:00-08:00'),
   },
-  {
-    start: new Date('2025-04-23T00:00:00-07:00'),
-    end: new Date('2025-04-25T00:00:00-07:00'),
-  },
 ];
 
 const isShortRCP = (start, end) => {
