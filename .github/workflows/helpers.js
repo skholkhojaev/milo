@@ -60,6 +60,10 @@ const RCPDates = [
     start: new Date('2025-12-14T00:00:00-08:00'),
     end: new Date('2026-01-04T00:00:00-08:00'),
   },
+  {
+    start: new Date('2025-04-23T00:00:00-07:00'),
+    end: new Date('2025-04-25T00:00:00-07:00'),
+  },
 ];
 
 const isShortRCP = (start, end) => {
@@ -88,6 +92,22 @@ const isWithinRCP = ({ offset = 0, excludeShortRCP = false } = {}) => {
   }
 
   return false;
+};
+
+const isWithinPrePostRCP = ({ offset = 7 } = {}) => {
+  const now = new Date();
+  return RCPDates.some(({ start, end }) => {
+    if (now >= start && now <= end) {
+      return true;
+    }
+    const preRCPStart = new Date(start);
+    preRCPStart.setDate(preRCPStart.getDate() - offset);
+    
+    const postRCPEnd = new Date(end);
+    postRCPEnd.setDate(postRCPEnd.getDate() + offset);
+    
+    return (preRCPStart <= now && now < start) || (end < now && now <= postRCPEnd);
+  });
 };
 
 const getLocalConfigs = () => {
@@ -177,5 +197,6 @@ module.exports = {
   pulls: { addLabels, addFiles, getChecks, getReviews },
   isShortRCP,
   isWithinRCP,
+  isWithinPrePostRCP,
   RCPDates,
 };
