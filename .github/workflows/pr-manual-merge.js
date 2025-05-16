@@ -31,29 +31,25 @@ async function main({ github, context } = {}) {
         `${prefix} <${html_url}|#${number}: ${title}>.`,
         process.env.MILO_RELEASE_SLACK_WH
     );
-}
-
-if (process.env.LOCAL_RUN) {
-    const { github, context } = getLocalConfigs();
-    main({ github, context });
-}
-
-if (['stage', 'main'].includes(base.ref)) {
-  await updateStageToMainPR(github, context, pull_request);
+    
+    // Update Stage-to-Main PR description if this was merged to stage or main
+    if (['stage', 'main'].includes(base.ref)) {
+        await updateStageToMainPR(github, context, pull_request);
+    }
 }
 
 async function updateStageToMainPR(github, context, mergedPR) {
   const owner = context.repo.owner; 
   const repo = context.repo.repo;
-  const PR_TITLE = '[Release] Stage to Main'
+  const PR_TITLE = '[Release] Stage to Main';
 
   try {
-    const stagetoMain = await github.rest.pulls
+    const stageToMain = await github.rest.pulls
         .list({owner, repo, state: 'open', base: 'main'})
         .then(({ data } = {}) => data.find(({ title } = {}) => title === PR_TITLE));
 
-    if (stagetoMain) {
-      let body = stagetoMain.body || '';
+    if (stageToMain) {
+      let body = stageToMain.body || '';
 
       if (!body.includes(mergedPR.html_url)){
         body = `- ${mergedPR.html_url}\n${body}`;
@@ -62,18 +58,18 @@ async function updateStageToMainPR(github, context, mergedPR) {
         await github.rest.pulls.update({
           owner,
           repo,
-          pull_number: updateStageToMainPR.number,
+          pull_number: stageToMain.number,
           body,
         });
 
-        console.log(`Updated Stage to Main PR #${StagetoMainPR.number} with manually merged PR #${mergedPR.number}`);
+        console.log(`Updated Stage to Main PR #${stageToMain.number} with manually merged PR #${mergedPR.number}`);
       } else {
-        console.log(`PR #${mergedPR.number} already exsist in the Stage to Main PR `);
+        console.log(`PR #${mergedPR.number} already exists in the Stage to Main PR`);
       }
     } else {
-      console.log(`No Stage to Main PR found.`)
+      console.log(`No Stage to Main PR found.`);
     }
-  }catch (error) {
+  } catch (error) {
     console.error("Error updating Stage-to-Main PR:", error.message);
   }
 }
