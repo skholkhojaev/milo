@@ -28,10 +28,15 @@ async function main({ github, context } = {}) {
 
     console.log(`Sending notification for PR #${number}: ${title}`);
 
-    await slackNotification(
-        `${prefix} <${html_url}|#${number}: ${title}>.`,
-        process.env.MILO_RELEASE_SLACK_WH
-    );
+    try {
+        await slackNotification(
+            `${prefix} <${html_url}|#${number}: ${title}>.`,
+            process.env.MILO_RELEASE_SLACK_WH
+        );
+    } catch (error) {
+        console.error("Error sending Slack notification:", error.message);
+        console.log("Continuing with PR update...");
+    }
     
     // Update Stage-to-Main PR description if this was merged to stage or main
     if (['stage', 'main'].includes(base.ref)) {
