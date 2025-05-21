@@ -10,7 +10,7 @@
     "test:file:watch": "npx playwright install && wtr --config ./web-test-runner.config.mjs --node-resolve --port=2000 --coverage --watch",
     "nala": "node nala/utils/nala.run.js",
     "a11y": "node nala/utils/nala.cli.js a11y",
-    "libs": "aem up --port=6456",
+    "libs": "aem up --port=6456 --url https://main--milo--skholkhojaev.hlx.page",
     "lint": "npm run lint:js && npm run lint:css",
     "lint:js": "eslint .",
     "lint:js:nibble": "eslint-nibble .",
