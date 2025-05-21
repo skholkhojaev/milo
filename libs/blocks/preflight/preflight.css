@@ -81,6 +81,7 @@ div.preflight-tab-panel[aria-selected="false"] {
 
 .preflight-general-content {
   margin-bottom: 72px;
+  overflow-x: auto;
 }
 
 p.preflight-content-heading {
@@ -226,6 +227,8 @@ p.preflight-date-wrapper .disabled-publish {
 
 .preflight-group-row a {
   color: #FFF;
+  word-break: break-all;
+  overflow-wrap: anywhere;
 }
 
 span.preflight-time {
