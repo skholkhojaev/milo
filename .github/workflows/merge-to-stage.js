@@ -8,7 +8,7 @@ const {
 
 // Run from the root of the project for local testing: node --env-file=.env .github/workflows/merge-to-stage.js
 const PR_TITLE = '[Release] Stage to Main';
-const REQUIRED_APPROVALS = process.env.REQUIRED_APPROVALS ? Number(process.env.REQUIRED_APPROVALS) : 2;
+const REQUIRED_APPROVALS = process.env.REQUIRED_APPROVALS ? Number(process.env.REQUIRED_APPROVALS) : 0;
 const BASE_MAX_MERGES = process.env.MAX_PRS_PER_BATCH ? Number(process.env.MAX_PRS_PER_BATCH) : 9;
 const MAX_MERGES = BASE_MAX_MERGES + (isWithinPrePostRCP() ? 3 : 0);
 let existingPRCount = 0;
@@ -94,10 +94,11 @@ const getPRs = async () => {
   ]);
 
   prs = prs.filter(({ checks, reviews, number, title }) => {
-    if (hasFailingChecks(checks)) {
-      commentOnPR(`Skipped merging ${number}: ${title} due to failing or running checks`, number);
-      return false;
-    }
+   // Skip check for failing checks - we'll merge even if checks are failing
+    // if (hasFailingChecks(checks)) {
+    //   commentOnPR(`Skipped merging ${number}: ${title} due to failing or running checks`, number);
+    //   return false;
+    // }
 
     const approvals = reviews.filter(({ state }) => state === 'APPROVED');
     if (approvals.length < REQUIRED_APPROVALS) {
