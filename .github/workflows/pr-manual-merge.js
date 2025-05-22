@@ -1,7 +1,5 @@
 const { slackNotification, getLocalConfigs } = require('./helpers.js');
 
-
-// testing testing
 async function main({ github, context } = {}) {
     if (!github || !context) {
         throw new Error("GitHub context is missing. Ensure you are running in the correct environment.");
@@ -38,7 +36,6 @@ async function main({ github, context } = {}) {
         console.log("Continuing with PR update...");
     }
     
-    // Update Stage-to-Main PR description if this was merged to stage or main
     if (['stage', 'main'].includes(base.ref)) {
         await updateStageToMainPR(github, context, pull_request);
     }
@@ -50,16 +47,21 @@ async function updateStageToMainPR(github, context, mergedPR) {
   const PR_TITLE = '[Release] Stage to Main';
 
   try {
+    console.log("Looking for Stage to Main PR...");
     const stageToMain = await github.rest.pulls
         .list({owner, repo, state: 'open', base: 'main'})
         .then(({ data } = {}) => data.find(({ title } = {}) => title === PR_TITLE));
 
     if (stageToMain) {
       let body = stageToMain.body || '';
+      console.log("Found Stage to Main PR #" + stageToMain.number);
+      console.log("Current PR body (first 100 chars): " + body.substring(0, 100) + "...");
 
       if (!body.includes(mergedPR.html_url)){
         body = `- ${mergedPR.html_url}\n${body}`;
         console.log("Updating PR's body with manually merged PR...");
+        console.log("PR link to add: " + mergedPR.html_url);
+        console.log("Race condition may occur if automated process is also updating...");
 
         await github.rest.pulls.update({
           owner,
@@ -86,3 +88,4 @@ if (process.env.LOCAL_RUN) {
 }
 
 module.exports = main;
+
