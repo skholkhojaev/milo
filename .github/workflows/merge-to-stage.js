@@ -251,6 +251,8 @@ const main = async (params) => {
     if (!stageToMainPR) await openStageToMainPR();
     if (stageToMainPR && body !== stageToMainPR.body) {
       console.log("Updating PR's body...");
+      console.log("Simulating processing delay before updating PR body (10 seconds)...");
+      await new Promise(resolve => setTimeout(resolve, 10000));
       await github.rest.pulls.update({
         owner,
         repo,
