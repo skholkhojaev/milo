@@ -144,11 +144,17 @@ export const checkForPersonalization = () => conditionalItemUpdate({
   key: text.personalization.key,
 });
 
-export const checkVideosWithoutPosterAttribute = () => conditionalItemUpdate({
-  failsWhen: !config.lcp.element.poster,
-  emptyWhen: !config.lcp.url.match('media_.*.mp4'),
-  key: text.videoPoster.key,
-});
+export const checkVideosWithoutPosterAttribute = () => {
+  const hasVideoUrl = config.lcp.url.match('media_.*.mp4');
+  const lcpElement = config.lcp.element;
+  const videoElement = lcpElement?.tagName === 'VIDEO' ? lcpElement : lcpElement?.closest('video') || lcpElement?.querySelector?.('video') || document.querySelector('main > div.section video');
+
+  conditionalItemUpdate({
+    failsWhen: videoElement && !videoElement.poster,
+    emptyWhen: !hasVideoUrl && !videoElement,
+    key: text.videoPoster.key,
+  });
+};
 
 export const checkIcons = () => conditionalItemUpdate({
   failsWhen: config.lcp.element.closest('.section').querySelector('.icon-milo'),
