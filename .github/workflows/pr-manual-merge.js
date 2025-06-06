@@ -5,6 +5,7 @@ async function main({ github, context } = {}) {
         throw new Error("GitHub context is missing. Ensure you are running in the correct environment.");
     }
 
+    // new manual merge
     if (process.env.LOCAL_RUN) {
         console.log("Local run detected. Loading local configurations...");
         const localConfigs = getLocalConfigs();
