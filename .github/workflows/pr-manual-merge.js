@@ -11,6 +11,7 @@ async function main({ github, context } = {}) {
         github = localConfigs.github;
         context = localConfigs.context;
     }
+    // Borderline 2
     // Borderline
     const { pull_request } = context.payload;
     if (!pull_request) {
