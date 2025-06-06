@@ -18,7 +18,15 @@ async function main({ github, context } = {}) {
         return;
     }
 
-    const { number, title, html_url, base } = pull_request;
+    await sendPRNotification(pull_request);
+
+    if (pull_request.base.ref === 'stage') {
+        await updateStageToMainPR(github, context, pull_request);
+    }
+}
+
+async function sendPRNotification(pullRequest) {
+    const { number, title, html_url, base } = pullRequest;
     const isStage = base.ref === 'stage';
     const prefix = isStage
         ? ':merged: PR merged to stage:'
@@ -34,10 +42,6 @@ async function main({ github, context } = {}) {
     } catch (error) {
         console.error("Error sending Slack notification:", error.message);
         console.log("Continuing with PR update...");
-    }
-    
-    if (['stage', 'main'].includes(base.ref)) {
-        await updateStageToMainPR(github, context, pull_request);
     }
 }
 
@@ -77,4 +81,3 @@ if (process.env.LOCAL_RUN) {
 }
 
 module.exports = main;
-
