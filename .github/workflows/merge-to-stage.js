@@ -10,7 +10,7 @@ const {
 // Run from the root of the project for local testing: node --env-file=.env .github/workflows/merge-to-stage.js
 const PR_TITLE = '[Release] Stage to Main';
 const REQUIRED_APPROVALS = process.env.REQUIRED_APPROVALS ? Number(process.env.REQUIRED_APPROVALS) : 0;
-const BASE_MAX_MERGES = process.env.MAX_PRS_PER_BATCH ? Number(process.env.MAX_PRS_PER_BATCH) : 9999;
+const BASE_MAX_MERGES = process.env.MAX_PRS_PER_BATCH ? Number(process.env.MAX_PRS_PER_BATCH) : 900;
 const MAX_MERGES = BASE_MAX_MERGES + (isWithinPrePostRCP() ? 3 : 0);
 let existingPRCount = 0;
 const STAGE = 'stage';
@@ -100,6 +100,7 @@ const getPRs = async () => {
     //   commentOnPR(`Skipped merging ${number}: ${title} due to failing or running checks`, number);
     //   return false;
     // }
+
     const approvals = reviews.filter(({ state }) => state === 'APPROVED');
     if (approvals.length < REQUIRED_APPROVALS) {
       commentOnPR(
@@ -156,7 +157,7 @@ const getStageToMainPR = () => github.rest.pulls
   .list({ owner, repo, state: 'open', base: PROD })
   .then(({ data } = {}) => data.find(({ title } = {}) => title === PR_TITLE))
   .then((pr) => pr && addLabels({ pr, github, owner, repo }))
-  .then((pr) => pr && addFiles({ pr, github, owner, repo }));
+  .then((pr) => pr && addFiles({ pr, github, owner, repo }))
 
 const openStageToMainPR = async () => {
   const { data: comparisonData } = await github.rest.repos.compareCommits({
@@ -209,7 +210,6 @@ const openStageToMainPR = async () => {
 const mergeLimitExceeded = () => MAX_MERGES - existingPRCount < 0;
 
 const main = async (params) => {
-  
   github = params.github;
   owner = params.context.repo.owner;
   repo = params.context.repo.repo;
@@ -219,24 +219,6 @@ const main = async (params) => {
     const stageToMainPR = await getStageToMainPR();
     console.log('has Stage to Main PR:', !!stageToMainPR);
     if (stageToMainPR) body = stageToMainPR.body;
-
-    const { data: comparisonData } = await github.rest.repos.compareCommits({
-      owner,
-      repo,
-      base: PROD,
-      head: STAGE,
-    });
-    for (const commit of comparisonData.commits) {
-      const { data: pullRequestData } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
-        owner,
-        repo,
-        commit_sha: commit.sha,
-      });
-      for (const pr of pullRequestData) {
-        if (!body.includes(pr.html_url)) body = `- ${pr.html_url}\n${body}`;
-      }
-    }
-
     existingPRCount = body.match(/https:\/\/github\.com\/skholkhojaev\/milo\/pull\/\d+/g)?.length || 0;
     console.log(`Number of PRs already in the batch: ${existingPRCount}`);
 
@@ -247,7 +229,6 @@ const main = async (params) => {
     if (stageToMainPR?.labels.some((label) => label.includes(LABELS.SOTPrefix))) return console.log('PR exists & testing started. Stopping execution.');
     await merge({ prs: highImpactPRs, type: LABELS.highPriority });
     await merge({ prs: normalPRs, type: 'normal' });
-        
     // Add 30-second delay after merging PRs but before updating Stage to Main PR description
     // This allows pr-manual-merge workflow to update the description first if it's triggered
     console.log("Adding 30-second delay after PR merges to allow pr-manual-merge to update description first...");
@@ -256,13 +237,11 @@ const main = async (params) => {
     if (!stageToMainPR) await openStageToMainPR();
     if (stageToMainPR && body !== stageToMainPR.body) {
       console.log("Updating PR's body...");
-      console.log("Simulating processing delay before updating PR body (30 seconds)...");
-      await new Promise(resolve => setTimeout(resolve, 30000));
       await github.rest.pulls.update({
         owner,
         repo,
         pull_number: stageToMainPR.number,
-        body
+        body,
       });
     }
     console.log('Process successfully executed.');
