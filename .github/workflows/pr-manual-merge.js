@@ -11,7 +11,7 @@ async function main({ github, context } = {}) {
         github = localConfigs.github;
         context = localConfigs.context;
     }
-
+    // Borderline
     const { pull_request } = context.payload;
     if (!pull_request) {
         console.log("No pull_request found in context payload. Skipping notification.");
