@@ -258,7 +258,7 @@ const main = async (params) => {
       console.log("Simulating processing delay before updating PR body (30 seconds)...");
       await new Promise(resolve => setTimeout(resolve, 30000));
       await github.rest.pulls.update({
-    console.log('Process successfully executed.');
+    // console.log('Process successfully executed.');
   } catch (error) {
     console.error(error);
   }
