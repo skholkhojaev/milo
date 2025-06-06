@@ -20,7 +20,7 @@ export const PLANS_AEM_FRAGMENT_MAPPING = {
     addon: true,
     secureLabel: true,
     planType: true,
-    badge: { tag: 'div', slot: 'badge' },
+    badge: { tag: 'div', slot: 'badge', default: 'spectrum-yellow-300-plans' },
     allowedBadgeColors: [
       'spectrum-yellow-300-plans',
       'spectrum-gray-300-plans',
@@ -179,8 +179,8 @@ export class Plans extends VariantLayout {
     }
 
     get icons() {
-      if (!this.card.querySelector('[slot="icons"]')) return '';
-      return html`<slot name="icons"></slot>`;
+        if (!this.card.querySelector('[slot="icons"]') && !this.card.getAttribute('id')) return '';
+        return html`<slot name="icons"></slot>`;
     }
 
     connectedCallbackHook() {
