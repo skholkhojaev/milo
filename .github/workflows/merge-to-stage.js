@@ -264,8 +264,8 @@ const main = async (params) => {
         pull_number: stageToMainPR.number,
         body
       });
-      console.log('Process successfully executed.');
     }
+    console.log('Process successfully executed.');
   } catch (error) {
     console.error(error);
   }
