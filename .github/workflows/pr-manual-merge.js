@@ -1,7 +1,5 @@
 const { slackNotification, getLocalConfigs } = require('./helpers.js');
 
-// test test
-// testing testing
 async function main({ github, context } = {}) {
     if (!github || !context) {
         throw new Error("GitHub context is missing. Ensure you are running in the correct environment.");
@@ -38,7 +36,6 @@ async function main({ github, context } = {}) {
         console.log("Continuing with PR update...");
     }
     
-    // Update Stage-to-Main PR description if this was merged to stage or main
     if (['stage', 'main'].includes(base.ref)) {
         await updateStageToMainPR(github, context, pull_request);
     }
@@ -54,29 +51,23 @@ async function updateStageToMainPR(github, context, mergedPR) {
         .list({owner, repo, state: 'open', base: 'main'})
         .then(({ data } = {}) => data.find(({ title } = {}) => title === PR_TITLE));
 
-    if (stageToMain) {
-      let body = stageToMain.body || '';
-
-      if (!body.includes(mergedPR.html_url)){
-        body = `- ${mergedPR.html_url}\n${body}`;
-        console.log("Updating PR's body with manually merged PR...");
-
-        await github.rest.pulls.update({
-          owner,
-          repo,
-          pull_number: stageToMain.number,
-          body,
-        });
-
-        console.log(`Updated Stage to Main PR #${stageToMain.number} with manually merged PR #${mergedPR.number}`);
-      } else {
-        console.log(`PR #${mergedPR.number} already exists in the Stage to Main PR`);
-      }
-    } else {
-      console.log(`No Stage to Main PR found.`);
+    if (!stageToMain || stageToMain.body.includes(mergedPR.html_url)) {
+      return;
     }
+    
+    const body = `- ${mergedPR.html_url}\n${stageToMain.body || ''}`;
+    console.log("Updating PR's description");
+
+    await github.rest.pulls.update({
+      owner,
+      repo,
+      pull_number: stageToMain.number,
+      body,
+    });
+
+    console.log(`Updated Stage to Main PR #${stageToMain.number} with manually merged PR #${mergedPR.number}`);
   } catch (error) {
-    console.error("Error updating Stage-to-Main PR:", error.message);
+    console.error("Error updating Stage to Main PR:", error.message);
   }
 }
 
@@ -86,3 +77,4 @@ if (process.env.LOCAL_RUN) {
 }
 
 module.exports = main;
+
