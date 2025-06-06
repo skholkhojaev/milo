@@ -60,7 +60,7 @@ async function updateStageToMainPR(github, context, mergedPR) {
       return;
     }
     
-    const body = `- ${mergedPR.html_url}\n${stageToMain.body || ''}`;
+    const body = `- ${mergedPR.html_url} (added by pr-manual-merge workflow)\n${stageToMain.body || ''}`;
     console.log("Updating PR's description");
 
     await github.rest.pulls.update({
