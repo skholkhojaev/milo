@@ -208,10 +208,6 @@ const openStageToMainPR = async () => {
 const mergeLimitExceeded = () => MAX_MERGES - existingPRCount < 0;
 
 const main = async (params) => {
-  // Add delay to prevent race condition with pr-manual-merge workflow
-  // This ensures pr-manual-merge has priority to update Stage to Main PR first
-  console.log('Adding 30 second delay to prevent race condition with pr-manual-merge workflow...');
-  await new Promise((resolve) => setTimeout(resolve, 30000));
   
   github = params.github;
   owner = params.context.repo.owner;
