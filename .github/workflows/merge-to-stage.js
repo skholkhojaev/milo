@@ -250,18 +250,18 @@ const main = async (params) => {
     if (stageToMainPR?.labels.some((label) => label.includes(LABELS.SOTPrefix))) return console.log('PR exists & testing started. Stopping execution.');
     await merge({ prs: highImpactPRs, type: LABELS.highPriority });
     await merge({ prs: normalPRs, type: 'normal' });
+        
+    // Add 30-second delay after merging PRs but before updating Stage to Main PR description
+    // This allows pr-manual-merge workflow to update the description first if it's triggered
+    console.log("Adding 30-second delay after PR merges to allow pr-manual-merge to update description first...");
+    await new Promise(resolve => setTimeout(resolve, 30000));
+    
     if (!stageToMainPR) await openStageToMainPR();
     if (stageToMainPR && body !== stageToMainPR.body) {
       console.log("Updating PR's body...");
-      console.log("Simulating processing delay before updating PR body (10 seconds)...");
-      await new Promise(resolve => setTimeout(resolve, 10000));
+      console.log("Simulating processing delay before updating PR body (30 seconds)...");
+      await new Promise(resolve => setTimeout(resolve, 30000));
       await github.rest.pulls.update({
-        owner,
-        repo,
-        pull_number: stageToMainPR.number,
-        body,
-      });
-    }
     console.log('Process successfully executed.');
   } catch (error) {
     console.error(error);
