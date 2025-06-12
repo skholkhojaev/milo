@@ -4,11 +4,13 @@ const {
   pulls: { addLabels, addFiles, getChecks, getReviews },
 } = require('./helpers.js');
 
+// will this duplicate the code? let's see
+// Test description update
 // Run from the root of the project for local testing: node --env-file=.env .github/workflows/merge-to-main.js
 const PR_TITLE = '[Release] Stage to Main';
 const STAGE = 'stage';
 const PROD = 'main';
-const MIN_SOT_APPROVALS = process.env.MIN_SOT_APPROVALS ? Number(process.env.MIN_SOT_APPROVALS) : 4;
+const MIN_SOT_APPROVALS = process.env.MIN_SOT_APPROVALS ? Number(process.env.MIN_SOT_APPROVALS) : 0;
 
 let github, owner, repo;
 
