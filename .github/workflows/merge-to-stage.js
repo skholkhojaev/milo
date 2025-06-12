@@ -8,8 +8,8 @@ const {
 
 // Run from the root of the project for local testing: node --env-file=.env .github/workflows/merge-to-stage.js
 const PR_TITLE = '[Release] Stage to Main';
-const REQUIRED_APPROVALS = process.env.REQUIRED_APPROVALS ? Number(process.env.REQUIRED_APPROVALS) : 0;
-const BASE_MAX_MERGES = process.env.MAX_PRS_PER_BATCH ? Number(process.env.MAX_PRS_PER_BATCH) : 900;
+const REQUIRED_APPROVALS = process.env.REQUIRED_APPROVALS ? Number(process.env.REQUIRED_APPROVALS) : 2;
+const BASE_MAX_MERGES = process.env.MAX_PRS_PER_BATCH ? Number(process.env.MAX_PRS_PER_BATCH) : 9;
 const MAX_MERGES = BASE_MAX_MERGES + (isWithinPrePostRCP() ? 3 : 0);
 let existingPRCount = 0;
 const STAGE = 'stage';
@@ -94,11 +94,10 @@ const getPRs = async () => {
   ]);
 
   prs = prs.filter(({ checks, reviews, number, title }) => {
-    // Skip check for failing checks - we'll merge even if checks are failing
-    // if (hasFailingChecks(checks)) {
-    //   commentOnPR(`Skipped merging ${number}: ${title} due to failing or running checks`, number);
-    //   return false;
-    // }
+    if (hasFailingChecks(checks)) {
+      commentOnPR(`Skipped merging ${number}: ${title} due to failing or running checks`, number);
+      return false;
+    }
 
     const approvals = reviews.filter(({ state }) => state === 'APPROVED');
     if (approvals.length < REQUIRED_APPROVALS) {
@@ -218,7 +217,7 @@ const main = async (params) => {
     const stageToMainPR = await getStageToMainPR();
     console.log('has Stage to Main PR:', !!stageToMainPR);
     if (stageToMainPR) body = stageToMainPR.body;
-    existingPRCount = body.match(/https:\/\/github\.com\/skholkhojaev\/milo\/pull\/\d+/g)?.length || 0;
+    existingPRCount = body.match(/https:\/\/github\.com\/adobecom\/milo\/pull\/\d+/g)?.length || 0;
     console.log(`Number of PRs already in the batch: ${existingPRCount}`);
 
     if (mergeLimitExceeded()) return console.log('Maximum number of PRs already merged. Stopping execution');
@@ -229,7 +228,6 @@ const main = async (params) => {
     await merge({ prs: highImpactPRs, type: LABELS.highPriority });
     await merge({ prs: normalPRs, type: 'normal' });
     if (!stageToMainPR) await openStageToMainPR();
-    if (stageToMainPR && body !== stageToMainPR.body) {
     console.log('Process successfully executed.');
   } catch (error) {
     console.error(error);
