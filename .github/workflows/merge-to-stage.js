@@ -156,7 +156,7 @@ const getStageToMainPR = () => github.rest.pulls
   .list({ owner, repo, state: 'open', base: PROD })
   .then(({ data } = {}) => data.find(({ title } = {}) => title === PR_TITLE))
   .then((pr) => pr && addLabels({ pr, github, owner, repo }))
-  .then((pr) => pr && addFiles({ pr, github, owner, repo }))
+  .then((pr) => pr && addFiles({ pr, github, owner, repo }));
 
 const openStageToMainPR = async () => {
   const { data: comparisonData } = await github.rest.repos.compareCommits({
