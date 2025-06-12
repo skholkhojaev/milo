@@ -230,14 +230,6 @@ const main = async (params) => {
     await merge({ prs: normalPRs, type: 'normal' });
     if (!stageToMainPR) await openStageToMainPR();
     if (stageToMainPR && body !== stageToMainPR.body) {
-      console.log("Updating PR's body...");
-      await github.rest.pulls.update({
-        owner,
-        repo,
-        pull_number: stageToMainPR.number,
-        body,
-      });
-    }
     console.log('Process successfully executed.');
   } catch (error) {
     console.error(error);
