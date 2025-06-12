@@ -94,7 +94,7 @@ const getPRs = async () => {
     ...prs.map((pr) => getReviews({ pr, github, owner, repo })),
   ]);
 
-
+  prs = prs.filter(({ checks, reviews, number, title }) => {
     // Skip check for failing checks - we'll merge even if checks are failing
     // if (hasFailingChecks(checks)) {
     //   commentOnPR(`Skipped merging ${number}: ${title} due to failing or running checks`, number);
