@@ -56,16 +56,22 @@ export default {
   },
 };
 
-const runChecks = async (url, area) => {
-  const assets = await Promise.all(runChecksAssets(url, area));
+const runChecks = async (url, area, injectVisualMetadata = false) => {
+  const assets = await Promise.all(runChecksAssets(url, area, injectVisualMetadata));
   const performance = await Promise.all(runChecksPerformance(url, area));
   const seo = runChecksSeo({ url, area });
   return { assets, performance, seo };
 };
 
-export async function getPreflightResults(url, area, useCache = true) {
-  if (useCache) {
-    if (!checks) checks = runChecks(url, area);
+export async function getPreflightResults(
+  url,
+  area,
+  useCache = true,
+  injectVisualMetadata = false,
+) {
+  if (useCache && !injectVisualMetadata) {
+    // Only use global cache for calls without visual metadata injection
+    if (!checks) checks = runChecks(url, area, injectVisualMetadata);
     const cachedChecks = await checks;
     const allResults = [
       ...(cachedChecks.assets || []),
@@ -79,7 +85,8 @@ export async function getPreflightResults(url, area, useCache = true) {
     };
   }
 
-  const res = await runChecks(url, area);
+  // Always run fresh checks when visual metadata injection is requested
+  const res = await runChecks(url, area, injectVisualMetadata);
   const allResults = [
     ...(res.assets || []),
     ...(res.performance || []),
