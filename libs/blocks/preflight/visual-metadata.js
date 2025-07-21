@@ -52,4 +52,3 @@ export function addAccessibilityMetadata(element, message, status = '') {
   const metadataEl = createTag('div', { class: `picture-meta-a11y preflight-decoration ${status}` }, message);
   container.appendChild(metadataEl);
 }
- 
