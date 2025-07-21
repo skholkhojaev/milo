@@ -187,19 +187,15 @@ export async function checkImageDimensions(url, area, injectVisualMetadata = fal
   const assetsWithMismatch = [];
   const assetsWithMatch = [];
 
-  // Only add the analysis class if we're injecting visual metadata
   if (injectVisualMetadata) {
     area.body.classList.add('preflight-assets-analysis');
   }
 
   for (const asset of assets) {
     const assetData = getAssetData(asset);
-
-    // Only inject visual metadata if explicitly requested
     if (injectVisualMetadata) {
       addAssetMetadata(asset, assetData);
     }
-
     if (assetData.hasMismatch) {
       assetsWithMismatch.push(assetData);
     } else {
@@ -207,7 +203,6 @@ export async function checkImageDimensions(url, area, injectVisualMetadata = fal
     }
   }
 
-  // Only remove the analysis class if we added it
   if (injectVisualMetadata) {
     area.body.classList.remove('preflight-assets-analysis');
   }
