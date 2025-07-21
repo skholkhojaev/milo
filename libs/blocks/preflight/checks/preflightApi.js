@@ -70,7 +70,7 @@ export async function getPreflightResults(
   injectVisualMetadata = false,
 ) {
   if (useCache && !injectVisualMetadata) {
-    // Only use global cache for calls without visual metadata injection
+    // Cache calls for without visual metadata
     if (!checks) checks = runChecks(url, area, injectVisualMetadata);
     const cachedChecks = await checks;
     const allResults = [
@@ -85,7 +85,6 @@ export async function getPreflightResults(
     };
   }
 
-  // Always run fresh checks when visual metadata injection is requested
   const res = await runChecks(url, area, injectVisualMetadata);
   const allResults = [
     ...(res.assets || []),
