@@ -17,6 +17,7 @@ export function addAssetMetadata(asset, assetData) {
   }
 
   const sizeStatus = assetData.hasMismatch ? 'is-invalid' : 'is-valid';
+<<<<<<< HEAD
   const isAboveFoldCritical = assetData.isAboveFold && assetData.hasMismatch;
 
   const sizeMessage = (isAboveFoldCritical && `CRITICAL: size issue! Use > ${assetData.recommendedDimensions}`)
@@ -24,6 +25,13 @@ export function addAssetMetadata(asset, assetData) {
     || 'Size: correct';
 
   const sizeEl = createTag('div', { class: `asset-meta-entry preflight-decoration ${sizeStatus} ${isAboveFoldCritical ? 'above-fold-critical' : ''}` }, sizeMessage);
+=======
+  const sizeMessage = assetData.hasMismatch
+    ? `Size: too small, use > ${assetData.recommendedDimensions}`
+    : 'Size: correct';
+
+  const sizeEl = createTag('div', { class: `asset-meta-entry preflight-decoration ${sizeStatus}` }, sizeMessage);
+>>>>>>> 1f3f9747e ([MWPW-172587] Preflight check status (#4496))
   container.appendChild(sizeEl);
 
   if (assetData.type === 'mpc') {
@@ -41,6 +49,7 @@ export function addAccessibilityMetadata(element, message, status = '') {
   let container;
 
   if (picture) {
+<<<<<<< HEAD
     container = picture.querySelector('.asset-meta');
     if (!container) {
       container = createTag('div', { class: 'asset-meta' });
@@ -59,5 +68,18 @@ export function addAccessibilityMetadata(element, message, status = '') {
 
   const statusClass = statusMap[status] || '';
   const metadataEl = createTag('div', { class: `asset-meta-entry ${statusClass}` }, message);
+=======
+    container = picture.querySelector('.picture-meta');
+    if (!container) {
+      container = createTag('div', { class: 'picture-meta preflight-decoration' });
+      picture.insertBefore(container, element.nextSibling);
+    }
+  } else {
+    container = createTag('div', { class: 'picture-meta preflight-decoration no-picture-tag' });
+    element.parentNode.insertBefore(container, element.nextSibling);
+  }
+
+  const metadataEl = createTag('div', { class: `picture-meta-a11y preflight-decoration ${status}` }, message);
+>>>>>>> 1f3f9747e ([MWPW-172587] Preflight check status (#4496))
   container.appendChild(metadataEl);
 }

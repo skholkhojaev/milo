@@ -146,6 +146,7 @@ function getAssetData(asset) {
   };
 }
 
+<<<<<<< HEAD
 function isAboveFold(asset) {
   const main = asset.closest('main');
   if (!main) return false;
@@ -156,6 +157,8 @@ function isAboveFold(asset) {
   return !hasSection || sections[0]?.contains(asset) || sections[1]?.contains(asset) || !!asset.closest('.hero, .marquee, .hero-marquee');
 }
 
+=======
+>>>>>>> 1f3f9747e ([MWPW-172587] Preflight check status (#4496))
 export function isViewportTooSmall() {
   return !window.matchMedia('(min-width: 1200px)').matches;
 }
@@ -207,17 +210,26 @@ export async function checkImageDimensions(url, area, injectVisualMetadata = fal
 
   if (injectVisualMetadata) area.body.classList.add('preflight-assets-analysis');
 
+<<<<<<< HEAD
   const processedAssets = assets.map((asset) => {
     const assetData = getAssetData(asset);
     const isAssetAboveFold = isAboveFold(asset);
     assetData.isAboveFold = isAssetAboveFold;
 
+=======
+  if (injectVisualMetadata) area.body.classList.add('preflight-assets-analysis');
+
+  for (const asset of assets) {
+    const assetData = getAssetData(asset);
+    if (injectVisualMetadata) addAssetMetadata(asset, assetData);
+>>>>>>> 1f3f9747e ([MWPW-172587] Preflight check status (#4496))
     if (assetData.hasMismatch) {
       assetData.failure = isAssetAboveFold ? 'critical' : 'warning';
     } else {
       assetData.failure = null;
     }
 
+<<<<<<< HEAD
     if (injectVisualMetadata) addAssetMetadata(asset, assetData);
 
     return assetData;
@@ -262,6 +274,9 @@ export async function checkImageDimensions(url, area, injectVisualMetadata = fal
   };
 
   const status = getStatus();
+=======
+  if (injectVisualMetadata) area.body.classList.remove('preflight-assets-analysis');
+>>>>>>> 1f3f9747e ([MWPW-172587] Preflight check status (#4496))
 
   const result = {
     ...status,
@@ -275,8 +290,12 @@ export async function checkImageDimensions(url, area, injectVisualMetadata = fal
     },
   };
 
+<<<<<<< HEAD
   const validStatuses = [STATUS.PASS, STATUS.FAIL, STATUS.LIMBO];
   if (validStatuses.includes(result.status)) {
+=======
+  if (result.status === STATUS.PASS || result.status === STATUS.FAIL) {
+>>>>>>> 1f3f9747e ([MWPW-172587] Preflight check status (#4496))
     assetsCache.set(cacheKey, JSON.parse(JSON.stringify(result)));
   }
 
